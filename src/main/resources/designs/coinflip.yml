@@ -1,0 +1,146 @@
+# COINFLIP - Dreamcoinflip
+# Play, create and top.
+# Made for a 3x2 screen:  /screen create <name> 3 2 coinflip
+#   or put it on an existing screen:  /screen design <screen> coinflip
+# Background is transparent (shows the wall) - change 'background: none' to a colour like "#11131A".
+# Edit text/colours/actions below, then /screen reload <screen>.
+start: home
+click-sound: ui.button.click
+pages:
+  home:
+    background: "none"
+    refresh: 20
+    elements:
+      - type: "rect"
+        x: 8
+        y: 8
+        w: 368
+        h: 36
+        color: "#11131A"
+      - type: "rect"
+        x: 8
+        y: 8
+        w: 3
+        h: 36
+        color: "#FACC15"
+        round: false
+      - type: "text"
+        x: 20
+        y: 14
+        text: "&lCOINFLIP"
+        scale: 2
+        color: "#FACC15"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: -18
+        y: 22
+        text: "&7Feeling lucky?"
+        max-width: 180
+        color: "#9CA3AF"
+        align: "right"
+      - type: "rect"
+        x: 8
+        y: 52
+        w: 368
+        h: 56
+        color: "#171B24"
+        border: 1
+        border-color: "#FACC15"
+      - type: "text"
+        x: "center"
+        y: 60
+        text: "&l50 / 50"
+        scale: 3
+        color: "#FFFFFF"
+        shadow-color: "#422006"
+      - type: "text"
+        x: "center"
+        y: 91
+        text: "&7Double your money - or lose it all"
+        shadow: false
+      - type: "rect"
+        x: 8
+        y: 116
+        w: 117
+        h: 44
+        color: "#171B24"
+        hover-color: "#232A37"
+        border: 1
+        border-color: "#FACC15"
+        actions:
+          - "player:coinflip"
+      - type: "text"
+        x: 17
+        y: 128
+        text: "&lPLAY"
+        max-width: 103
+        color: "#FACC15"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: 17
+        y: 139
+        text: "&7Open flips"
+        max-width: 103
+        color: "#9CA3AF"
+        shadow: false
+      - type: "rect"
+        x: 133
+        y: 116
+        w: 117
+        h: 44
+        color: "#171B24"
+        hover-color: "#232A37"
+        border: 1
+        border-color: "#FACC15"
+        actions:
+          - "message:&eCoinflip &8> &fType &e/cf create <amount>"
+      - type: "text"
+        x: 142
+        y: 128
+        text: "&lCREATE"
+        max-width: 103
+        color: "#FACC15"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: 142
+        y: 139
+        text: "&7/cf create"
+        max-width: 103
+        color: "#9CA3AF"
+        shadow: false
+      - type: "rect"
+        x: 258
+        y: 116
+        w: 117
+        h: 44
+        color: "#171B24"
+        hover-color: "#232A37"
+        border: 1
+        border-color: "#FACC15"
+        actions:
+          - "player:cf top"
+      - type: "text"
+        x: 267
+        y: 128
+        text: "&lTOP"
+        max-width: 103
+        color: "#FACC15"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: 267
+        y: 139
+        text: "&7Best flippers"
+        max-width: 103
+        color: "#9CA3AF"
+        shadow: false
+      - type: "rect"
+        x: 8
+        y: -8
+        w: 368
+        h: 16
+        color: "#11131A"
+      - type: "text"
+        x: "center"
+        y: -12
+        text: "&7Gamble responsibly  &8|  &7/cf"
+        color: "#9CA3AF"

@@ -1,0 +1,2004 @@
+# FEATURES - browse everything the server has
+# Hub with 9 categories, each opening its own page of buttons.
+# Made for a 3x2 screen:  /screen create <name> 3 2 features
+#   or put it on an existing screen:  /screen design <screen> features
+# Background is transparent (shows the wall) - change 'background: none' to a colour like "#11131A".
+# Edit text/colours/actions below, then /screen reload <screen>.
+# Some lines use PlaceholderAPI placeholders (%...%) - without PlaceholderAPI they show as raw text.
+start: home
+click-sound: ui.button.click
+pages:
+  home:
+    background: "none"
+    refresh: 20
+    elements:
+      - type: "rect"
+        x: 8
+        y: 8
+        w: 368
+        h: 36
+        color: "#11131A"
+      - type: "rect"
+        x: 8
+        y: 8
+        w: 3
+        h: 36
+        color: "#22D3EE"
+        round: false
+      - type: "text"
+        x: 20
+        y: 14
+        text: "&lFEATURES"
+        scale: 2
+        color: "#22D3EE"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: -18
+        y: 22
+        text: "&7Tap a category"
+        max-width: 180
+        color: "#9CA3AF"
+        align: "right"
+      - type: "rect"
+        x: 8
+        y: 52
+        w: 117
+        h: 40
+        color: "#171B24"
+        hover-color: "#232A37"
+        border: 1
+        border-color: "#34D399"
+        actions:
+          - "page:economy"
+      - type: "text"
+        x: 17
+        y: 62
+        text: "&lECONOMY"
+        max-width: 103
+        color: "#34D399"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: 17
+        y: 73
+        text: "&7Money & coins"
+        max-width: 103
+        color: "#9CA3AF"
+        shadow: false
+      - type: "rect"
+        x: 133
+        y: 52
+        w: 117
+        h: 40
+        color: "#171B24"
+        hover-color: "#232A37"
+        border: 1
+        border-color: "#10B981"
+        actions:
+          - "page:shops"
+      - type: "text"
+        x: 142
+        y: 62
+        text: "&lSHOPS"
+        max-width: 103
+        color: "#10B981"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: 142
+        y: 73
+        text: "&7Buy & sell"
+        max-width: 103
+        color: "#9CA3AF"
+        shadow: false
+      - type: "rect"
+        x: 258
+        y: 52
+        w: 117
+        h: 40
+        color: "#171B24"
+        hover-color: "#232A37"
+        border: 1
+        border-color: "#38BDF8"
+        actions:
+          - "page:teleport"
+      - type: "text"
+        x: 267
+        y: 62
+        text: "&lTELEPORT"
+        max-width: 103
+        color: "#38BDF8"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: 267
+        y: 73
+        text: "&7Homes, RTP, TPA"
+        max-width: 103
+        color: "#9CA3AF"
+        shadow: false
+      - type: "rect"
+        x: 8
+        y: 98
+        w: 117
+        h: 40
+        color: "#171B24"
+        hover-color: "#232A37"
+        border: 1
+        border-color: "#F43F5E"
+        actions:
+          - "page:pvp"
+      - type: "text"
+        x: 17
+        y: 108
+        text: "&lPVP"
+        max-width: 103
+        color: "#F43F5E"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: 17
+        y: 119
+        text: "&7Duels & bounties"
+        max-width: 103
+        color: "#9CA3AF"
+        shadow: false
+      - type: "rect"
+        x: 133
+        y: 98
+        w: 117
+        h: 40
+        color: "#171B24"
+        hover-color: "#232A37"
+        border: 1
+        border-color: "#C084FC"
+        actions:
+          - "page:crates"
+      - type: "text"
+        x: 142
+        y: 108
+        text: "&lCRATES"
+        max-width: 103
+        color: "#C084FC"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: 142
+        y: 119
+        text: "&7Keys & loot"
+        max-width: 103
+        color: "#9CA3AF"
+        shadow: false
+      - type: "rect"
+        x: 258
+        y: 98
+        w: 117
+        h: 40
+        color: "#171B24"
+        hover-color: "#232A37"
+        border: 1
+        border-color: "#F97316"
+        actions:
+          - "page:events"
+      - type: "text"
+        x: 267
+        y: 108
+        text: "&lEVENTS"
+        max-width: 103
+        color: "#F97316"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: 267
+        y: 119
+        text: "&7KOTH & keyall"
+        max-width: 103
+        color: "#9CA3AF"
+        shadow: false
+      - type: "rect"
+        x: 8
+        y: 144
+        w: 117
+        h: 40
+        color: "#171B24"
+        hover-color: "#232A37"
+        border: 1
+        border-color: "#84CC16"
+        actions:
+          - "page:land"
+      - type: "text"
+        x: 17
+        y: 154
+        text: "&lLAND"
+        max-width: 103
+        color: "#84CC16"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: 17
+        y: 165
+        text: "&7Claims & teams"
+        max-width: 103
+        color: "#9CA3AF"
+        shadow: false
+      - type: "rect"
+        x: 133
+        y: 144
+        w: 117
+        h: 40
+        color: "#171B24"
+        hover-color: "#232A37"
+        border: 1
+        border-color: "#60A5FA"
+        actions:
+          - "page:storage"
+      - type: "text"
+        x: 142
+        y: 154
+        text: "&lSTORAGE"
+        max-width: 103
+        color: "#60A5FA"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: 142
+        y: 165
+        text: "&7Vaults & spawners"
+        max-width: 103
+        color: "#9CA3AF"
+        shadow: false
+      - type: "rect"
+        x: 258
+        y: 144
+        w: 117
+        h: 40
+        color: "#171B24"
+        hover-color: "#232A37"
+        border: 1
+        border-color: "#FBBF24"
+        actions:
+          - "page:me"
+      - type: "text"
+        x: 267
+        y: 154
+        text: "&lMY STATS"
+        max-width: 103
+        color: "#FBBF24"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: 267
+        y: 165
+        text: "&7Your numbers"
+        max-width: 103
+        color: "#9CA3AF"
+        shadow: false
+      - type: "rect"
+        x: 8
+        y: -8
+        w: 368
+        h: 16
+        color: "#11131A"
+      - type: "text"
+        x: "center"
+        y: -12
+        text: "&7Everything on the server in one place"
+        color: "#9CA3AF"
+  economy:
+    background: "none"
+    refresh: 20
+    elements:
+      - type: "rect"
+        x: 8
+        y: 8
+        w: 368
+        h: 36
+        color: "#11131A"
+      - type: "rect"
+        x: 8
+        y: 8
+        w: 3
+        h: 36
+        color: "#34D399"
+        round: false
+      - type: "text"
+        x: 20
+        y: 14
+        text: "&lECONOMY"
+        scale: 2
+        color: "#34D399"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: -18
+        y: 22
+        text: "&7Money & coins"
+        max-width: 180
+        color: "#9CA3AF"
+        align: "right"
+      - type: "rect"
+        x: 8
+        y: 52
+        w: 117
+        h: 42
+        color: "#171B24"
+        hover-color: "#232A37"
+        border: 1
+        border-color: "#34D399"
+        actions:
+          - "player:balance"
+      - type: "text"
+        x: 17
+        y: 63
+        text: "&lBALANCE"
+        max-width: 103
+        color: "#34D399"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: 17
+        y: 74
+        text: "&7Your money"
+        max-width: 103
+        color: "#9CA3AF"
+        shadow: false
+      - type: "rect"
+        x: 133
+        y: 52
+        w: 117
+        h: 42
+        color: "#171B24"
+        hover-color: "#232A37"
+        border: 1
+        border-color: "#34D399"
+        actions:
+          - "player:baltop"
+      - type: "text"
+        x: 142
+        y: 63
+        text: "&lBALTOP"
+        max-width: 103
+        color: "#34D399"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: 142
+        y: 74
+        text: "&7Richest"
+        max-width: 103
+        color: "#9CA3AF"
+        shadow: false
+      - type: "rect"
+        x: 258
+        y: 52
+        w: 117
+        h: 42
+        color: "#171B24"
+        hover-color: "#232A37"
+        border: 1
+        border-color: "#34D399"
+        actions:
+          - "player:coinflip"
+      - type: "text"
+        x: 267
+        y: 63
+        text: "&lCOINFLIP"
+        max-width: 103
+        color: "#34D399"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: 267
+        y: 74
+        text: "&750/50"
+        max-width: 103
+        color: "#9CA3AF"
+        shadow: false
+      - type: "rect"
+        x: 8
+        y: 102
+        w: 117
+        h: 42
+        color: "#171B24"
+        hover-color: "#232A37"
+        border: 1
+        border-color: "#34D399"
+        actions:
+          - "player:coinshop"
+      - type: "text"
+        x: 17
+        y: 113
+        text: "&lCOINS"
+        max-width: 103
+        color: "#34D399"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: 17
+        y: 124
+        text: "&f%dreamcoinshop_coins%"
+        max-width: 103
+        color: "#9CA3AF"
+        shadow: false
+      - type: "rect"
+        x: 133
+        y: 102
+        w: 117
+        h: 42
+        color: "#171B24"
+        hover-color: "#232A37"
+        border: 1
+        border-color: "#34D399"
+        actions:
+          - "player:orbshop"
+      - type: "text"
+        x: 142
+        y: 113
+        text: "&lORBS"
+        max-width: 103
+        color: "#34D399"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: 142
+        y: 124
+        text: "&f%dreamcoinshop_orbs%"
+        max-width: 103
+        color: "#9CA3AF"
+        shadow: false
+      - type: "rect"
+        x: 258
+        y: 102
+        w: 117
+        h: 42
+        color: "#171B24"
+        hover-color: "#232A37"
+        border: 1
+        border-color: "#34D399"
+        actions:
+          - "message:&aPay &8> &fType &e/pay <player> <amount>"
+      - type: "text"
+        x: 267
+        y: 113
+        text: "&lPAY"
+        max-width: 103
+        color: "#34D399"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: 267
+        y: 124
+        text: "&7/pay"
+        max-width: 103
+        color: "#9CA3AF"
+        shadow: false
+      - type: "rect"
+        x: 8
+        y: 156
+        w: 368
+        h: 36
+        color: "#171B24"
+      - type: "text"
+        x: "center"
+        y: 162
+        text: "&fSend money: &e/pay <player> <amount>"
+        max-width: 356
+      - type: "text"
+        x: "center"
+        y: 175
+        text: "&7Coins & orbs: &f/coin &7and &f/orb"
+        max-width: 356
+        shadow: false
+      - type: "button"
+        x: 8
+        y: -8
+        w: 80
+        h: 18
+        text: "< Back"
+        color: "#171B24"
+        hover-color: "#232A37"
+        actions:
+          - "page:back"
+      - type: "button"
+        x: -8
+        y: -8
+        w: 100
+        h: 18
+        text: "All features"
+        color: "#171B24"
+        hover-color: "#232A37"
+        actions:
+          - "close"
+  shops:
+    background: "none"
+    refresh: 20
+    elements:
+      - type: "rect"
+        x: 8
+        y: 8
+        w: 368
+        h: 36
+        color: "#11131A"
+      - type: "rect"
+        x: 8
+        y: 8
+        w: 3
+        h: 36
+        color: "#10B981"
+        round: false
+      - type: "text"
+        x: 20
+        y: 14
+        text: "&lSHOPS"
+        scale: 2
+        color: "#10B981"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: -18
+        y: 22
+        text: "&7Buy & sell"
+        max-width: 180
+        color: "#9CA3AF"
+        align: "right"
+      - type: "rect"
+        x: 8
+        y: 52
+        w: 117
+        h: 42
+        color: "#171B24"
+        hover-color: "#232A37"
+        border: 1
+        border-color: "#10B981"
+        actions:
+          - "player:shop"
+      - type: "text"
+        x: 17
+        y: 63
+        text: "&lSHOP"
+        max-width: 103
+        color: "#10B981"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: 17
+        y: 74
+        text: "&7Buy items"
+        max-width: 103
+        color: "#9CA3AF"
+        shadow: false
+      - type: "rect"
+        x: 133
+        y: 52
+        w: 117
+        h: 42
+        color: "#171B24"
+        hover-color: "#232A37"
+        border: 1
+        border-color: "#10B981"
+        actions:
+          - "player:sell"
+      - type: "text"
+        x: 142
+        y: 63
+        text: "&lSELL"
+        max-width: 103
+        color: "#10B981"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: 142
+        y: 74
+        text: "&7Sell items"
+        max-width: 103
+        color: "#9CA3AF"
+        shadow: false
+      - type: "rect"
+        x: 258
+        y: 52
+        w: 117
+        h: 42
+        color: "#171B24"
+        hover-color: "#232A37"
+        border: 1
+        border-color: "#10B981"
+        actions:
+          - "player:ah"
+      - type: "text"
+        x: 267
+        y: 63
+        text: "&lAUCTION"
+        max-width: 103
+        color: "#10B981"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: 267
+        y: 74
+        text: "&7Bid & sell"
+        max-width: 103
+        color: "#9CA3AF"
+        shadow: false
+      - type: "rect"
+        x: 8
+        y: 102
+        w: 117
+        h: 42
+        color: "#171B24"
+        hover-color: "#232A37"
+        border: 1
+        border-color: "#10B981"
+        actions:
+          - "player:order"
+      - type: "text"
+        x: 17
+        y: 113
+        text: "&lORDERS"
+        max-width: 103
+        color: "#10B981"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: 17
+        y: 124
+        text: "&7Request items"
+        max-width: 103
+        color: "#9CA3AF"
+        shadow: false
+      - type: "rect"
+        x: 133
+        y: 102
+        w: 117
+        h: 42
+        color: "#171B24"
+        hover-color: "#232A37"
+        border: 1
+        border-color: "#10B981"
+        actions:
+          - "player:coinshop"
+      - type: "text"
+        x: 142
+        y: 113
+        text: "&lCOIN SHOP"
+        max-width: 103
+        color: "#10B981"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: 142
+        y: 124
+        text: "&7Spend coins"
+        max-width: 103
+        color: "#9CA3AF"
+        shadow: false
+      - type: "rect"
+        x: 258
+        y: 102
+        w: 117
+        h: 42
+        color: "#171B24"
+        hover-color: "#232A37"
+        border: 1
+        border-color: "#10B981"
+        actions:
+          - "player:orbshop"
+      - type: "text"
+        x: 267
+        y: 113
+        text: "&lORB SHOP"
+        max-width: 103
+        color: "#10B981"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: 267
+        y: 124
+        text: "&7Spend orbs"
+        max-width: 103
+        color: "#9CA3AF"
+        shadow: false
+      - type: "button"
+        x: 8
+        y: -8
+        w: 80
+        h: 18
+        text: "< Back"
+        color: "#171B24"
+        hover-color: "#232A37"
+        actions:
+          - "page:back"
+      - type: "button"
+        x: -8
+        y: -8
+        w: 100
+        h: 18
+        text: "All features"
+        color: "#171B24"
+        hover-color: "#232A37"
+        actions:
+          - "close"
+  teleport:
+    background: "none"
+    refresh: 20
+    elements:
+      - type: "rect"
+        x: 8
+        y: 8
+        w: 368
+        h: 36
+        color: "#11131A"
+      - type: "rect"
+        x: 8
+        y: 8
+        w: 3
+        h: 36
+        color: "#38BDF8"
+        round: false
+      - type: "text"
+        x: 20
+        y: 14
+        text: "&lTELEPORT"
+        scale: 2
+        color: "#38BDF8"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: -18
+        y: 22
+        text: "&7Get around"
+        max-width: 180
+        color: "#9CA3AF"
+        align: "right"
+      - type: "rect"
+        x: 8
+        y: 52
+        w: 117
+        h: 42
+        color: "#171B24"
+        hover-color: "#232A37"
+        border: 1
+        border-color: "#38BDF8"
+        actions:
+          - "player:home"
+      - type: "text"
+        x: 17
+        y: 63
+        text: "&lHOMES"
+        max-width: 103
+        color: "#38BDF8"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: 17
+        y: 74
+        text: "&7/home"
+        max-width: 103
+        color: "#9CA3AF"
+        shadow: false
+      - type: "rect"
+        x: 133
+        y: 52
+        w: 117
+        h: 42
+        color: "#171B24"
+        hover-color: "#232A37"
+        border: 1
+        border-color: "#38BDF8"
+        actions:
+          - "player:rtp"
+      - type: "text"
+        x: 142
+        y: 63
+        text: "&lRTP"
+        max-width: 103
+        color: "#38BDF8"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: 142
+        y: 74
+        text: "&7Random spot"
+        max-width: 103
+        color: "#9CA3AF"
+        shadow: false
+      - type: "rect"
+        x: 258
+        y: 52
+        w: 117
+        h: 42
+        color: "#171B24"
+        hover-color: "#232A37"
+        border: 1
+        border-color: "#38BDF8"
+        actions:
+          - "player:rtpqueue"
+      - type: "text"
+        x: 267
+        y: 63
+        text: "&lRTP QUEUE"
+        max-width: 103
+        color: "#38BDF8"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: 267
+        y: 74
+        text: "&71v1 in the wild"
+        max-width: 103
+        color: "#9CA3AF"
+        shadow: false
+      - type: "rect"
+        x: 8
+        y: 102
+        w: 117
+        h: 42
+        color: "#171B24"
+        hover-color: "#232A37"
+        border: 1
+        border-color: "#38BDF8"
+        actions:
+          - "message:&bTPA &8> &fType &e/tpa <player>"
+      - type: "text"
+        x: 17
+        y: 113
+        text: "&lTPA"
+        max-width: 103
+        color: "#38BDF8"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: 17
+        y: 124
+        text: "&7/tpa <player>"
+        max-width: 103
+        color: "#9CA3AF"
+        shadow: false
+      - type: "rect"
+        x: 133
+        y: 102
+        w: 117
+        h: 42
+        color: "#171B24"
+        hover-color: "#232A37"
+        border: 1
+        border-color: "#38BDF8"
+        actions:
+          - "player:tpauto"
+      - type: "text"
+        x: 142
+        y: 113
+        text: "&lTPA AUTO"
+        max-width: 103
+        color: "#38BDF8"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: 142
+        y: 124
+        text: "&7Auto-accept"
+        max-width: 103
+        color: "#9CA3AF"
+        shadow: false
+      - type: "rect"
+        x: 258
+        y: 102
+        w: 117
+        h: 42
+        color: "#171B24"
+        hover-color: "#232A37"
+        border: 1
+        border-color: "#38BDF8"
+        actions:
+          - "message:&bWarps &8> &fType &e/warp <name>"
+      - type: "text"
+        x: 267
+        y: 113
+        text: "&lWARPS"
+        max-width: 103
+        color: "#38BDF8"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: 267
+        y: 124
+        text: "&7/warp <name>"
+        max-width: 103
+        color: "#9CA3AF"
+        shadow: false
+      - type: "rect"
+        x: 8
+        y: 156
+        w: 368
+        h: 36
+        color: "#171B24"
+      - type: "text"
+        x: "center"
+        y: 162
+        text: "&fAsk someone to come: &e/tpahere <player>"
+        max-width: 356
+      - type: "text"
+        x: "center"
+        y: 175
+        text: "&7Accept with &f/tpaccept &7- deny with &f/tpdeny"
+        max-width: 356
+        shadow: false
+      - type: "button"
+        x: 8
+        y: -8
+        w: 80
+        h: 18
+        text: "< Back"
+        color: "#171B24"
+        hover-color: "#232A37"
+        actions:
+          - "page:back"
+      - type: "button"
+        x: -8
+        y: -8
+        w: 100
+        h: 18
+        text: "All features"
+        color: "#171B24"
+        hover-color: "#232A37"
+        actions:
+          - "close"
+  pvp:
+    background: "none"
+    refresh: 20
+    elements:
+      - type: "rect"
+        x: 8
+        y: 8
+        w: 368
+        h: 36
+        color: "#11131A"
+      - type: "rect"
+        x: 8
+        y: 8
+        w: 3
+        h: 36
+        color: "#F43F5E"
+        round: false
+      - type: "text"
+        x: 20
+        y: 14
+        text: "&lPVP"
+        scale: 2
+        color: "#F43F5E"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: -18
+        y: 22
+        text: "&7Fight!"
+        max-width: 180
+        color: "#9CA3AF"
+        align: "right"
+      - type: "rect"
+        x: 8
+        y: 52
+        w: 117
+        h: 42
+        color: "#171B24"
+        hover-color: "#232A37"
+        border: 1
+        border-color: "#F43F5E"
+        actions:
+          - "player:duel"
+      - type: "text"
+        x: 17
+        y: 63
+        text: "&lDUELS"
+        max-width: 103
+        color: "#F43F5E"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: 17
+        y: 74
+        text: "&71v1 & more"
+        max-width: 103
+        color: "#9CA3AF"
+        shadow: false
+      - type: "rect"
+        x: 133
+        y: 52
+        w: 117
+        h: 42
+        color: "#171B24"
+        hover-color: "#232A37"
+        border: 1
+        border-color: "#F43F5E"
+        actions:
+          - "player:bounty list"
+      - type: "text"
+        x: 142
+        y: 63
+        text: "&lBOUNTIES"
+        max-width: 103
+        color: "#F43F5E"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: 142
+        y: 74
+        text: "&7Wanted list"
+        max-width: 103
+        color: "#9CA3AF"
+        shadow: false
+      - type: "rect"
+        x: 258
+        y: 52
+        w: 117
+        h: 42
+        color: "#171B24"
+        hover-color: "#232A37"
+        border: 1
+        border-color: "#F43F5E"
+        actions:
+          - "player:koth"
+      - type: "text"
+        x: 267
+        y: 63
+        text: "&lKOTH"
+        max-width: 103
+        color: "#F43F5E"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: 267
+        y: 74
+        text: "&7Hold the hill"
+        max-width: 103
+        color: "#9CA3AF"
+        shadow: false
+      - type: "rect"
+        x: 8
+        y: 102
+        w: 117
+        h: 42
+        color: "#171B24"
+        hover-color: "#232A37"
+        border: 1
+        border-color: "#F43F5E"
+        actions:
+          - "page:me"
+      - type: "text"
+        x: 17
+        y: 113
+        text: "&lKILLS"
+        max-width: 103
+        color: "#F43F5E"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: 17
+        y: 124
+        text: "&f{stat_kills}"
+        max-width: 103
+        color: "#9CA3AF"
+        shadow: false
+      - type: "rect"
+        x: 133
+        y: 102
+        w: 117
+        h: 42
+        color: "#171B24"
+        hover-color: "#232A37"
+        border: 1
+        border-color: "#F43F5E"
+        actions:
+          - "page:me"
+      - type: "text"
+        x: 142
+        y: 113
+        text: "&lDEATHS"
+        max-width: 103
+        color: "#F43F5E"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: 142
+        y: 124
+        text: "&f{stat_deaths}"
+        max-width: 103
+        color: "#9CA3AF"
+        shadow: false
+      - type: "rect"
+        x: 258
+        y: 102
+        w: 117
+        h: 42
+        color: "#171B24"
+        hover-color: "#232A37"
+        border: 1
+        border-color: "#F43F5E"
+        actions:
+          - "player:coinflip"
+      - type: "text"
+        x: 267
+        y: 113
+        text: "&lCOINFLIP"
+        max-width: 103
+        color: "#F43F5E"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: 267
+        y: 124
+        text: "&7Risk it"
+        max-width: 103
+        color: "#9CA3AF"
+        shadow: false
+      - type: "button"
+        x: 8
+        y: -8
+        w: 80
+        h: 18
+        text: "< Back"
+        color: "#171B24"
+        hover-color: "#232A37"
+        actions:
+          - "page:back"
+      - type: "button"
+        x: -8
+        y: -8
+        w: 100
+        h: 18
+        text: "All features"
+        color: "#171B24"
+        hover-color: "#232A37"
+        actions:
+          - "close"
+  crates:
+    background: "none"
+    refresh: 20
+    elements:
+      - type: "rect"
+        x: 8
+        y: 8
+        w: 368
+        h: 36
+        color: "#11131A"
+      - type: "rect"
+        x: 8
+        y: 8
+        w: 3
+        h: 36
+        color: "#C084FC"
+        round: false
+      - type: "text"
+        x: 20
+        y: 14
+        text: "&lCRATES"
+        scale: 2
+        color: "#C084FC"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: -18
+        y: 22
+        text: "&7Keys & loot"
+        max-width: 180
+        color: "#9CA3AF"
+        align: "right"
+      - type: "rect"
+        x: 8
+        y: 52
+        w: 117
+        h: 42
+        color: "#171B24"
+        hover-color: "#232A37"
+        border: 1
+        border-color: "#C084FC"
+        actions:
+          - "player:keys"
+      - type: "text"
+        x: 17
+        y: 63
+        text: "&lMY KEYS"
+        max-width: 103
+        color: "#C084FC"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: 17
+        y: 74
+        text: "&f%oc_total% &7keys"
+        max-width: 103
+        color: "#9CA3AF"
+        shadow: false
+      - type: "rect"
+        x: 133
+        y: 52
+        w: 117
+        h: 42
+        color: "#171B24"
+        hover-color: "#232A37"
+        border: 1
+        border-color: "#C084FC"
+        actions:
+          - "player:keys"
+      - type: "text"
+        x: 142
+        y: 63
+        text: "&lKEYALL"
+        max-width: 103
+        color: "#C084FC"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: 142
+        y: 74
+        text: "&f%dreamcore_keyall_time%"
+        max-width: 103
+        color: "#9CA3AF"
+        shadow: false
+      - type: "rect"
+        x: 258
+        y: 52
+        w: 117
+        h: 42
+        color: "#171B24"
+        hover-color: "#232A37"
+        border: 1
+        border-color: "#C084FC"
+        actions:
+          - "player:store"
+      - type: "text"
+        x: 267
+        y: 63
+        text: "&lGET KEYS"
+        max-width: 103
+        color: "#C084FC"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: 267
+        y: 74
+        text: "&7Store"
+        max-width: 103
+        color: "#9CA3AF"
+        shadow: false
+      - type: "rect"
+        x: 8
+        y: 156
+        w: 368
+        h: 36
+        color: "#171B24"
+      - type: "text"
+        x: "center"
+        y: 162
+        text: "&fCrates are at spawn"
+        max-width: 356
+      - type: "text"
+        x: "center"
+        y: 175
+        text: "&7Keyall gives everyone a key - stay online!"
+        max-width: 356
+        shadow: false
+      - type: "button"
+        x: 8
+        y: -8
+        w: 80
+        h: 18
+        text: "< Back"
+        color: "#171B24"
+        hover-color: "#232A37"
+        actions:
+          - "page:back"
+      - type: "button"
+        x: -8
+        y: -8
+        w: 100
+        h: 18
+        text: "All features"
+        color: "#171B24"
+        hover-color: "#232A37"
+        actions:
+          - "close"
+  events:
+    background: "none"
+    refresh: 20
+    elements:
+      - type: "rect"
+        x: 8
+        y: 8
+        w: 368
+        h: 36
+        color: "#11131A"
+      - type: "rect"
+        x: 8
+        y: 8
+        w: 3
+        h: 36
+        color: "#F97316"
+        round: false
+      - type: "text"
+        x: 20
+        y: 14
+        text: "&lEVENTS"
+        scale: 2
+        color: "#F97316"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: -18
+        y: 22
+        text: "&7Don't miss out"
+        max-width: 180
+        color: "#9CA3AF"
+        align: "right"
+      - type: "rect"
+        x: 8
+        y: 52
+        w: 117
+        h: 42
+        color: "#171B24"
+        hover-color: "#232A37"
+        border: 1
+        border-color: "#F97316"
+        actions:
+          - "player:koth"
+      - type: "text"
+        x: 17
+        y: 63
+        text: "&lNEXT KOTH"
+        max-width: 103
+        color: "#F97316"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: 17
+        y: 74
+        text: "&f%koth_next%"
+        max-width: 103
+        color: "#9CA3AF"
+        shadow: false
+      - type: "rect"
+        x: 133
+        y: 52
+        w: 117
+        h: 42
+        color: "#171B24"
+        hover-color: "#232A37"
+        border: 1
+        border-color: "#F97316"
+        actions:
+          - "player:koth"
+      - type: "text"
+        x: 142
+        y: 63
+        text: "&lSTARTS IN"
+        max-width: 103
+        color: "#F97316"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: 142
+        y: 74
+        text: "&f%koth_next_countdown%"
+        max-width: 103
+        color: "#9CA3AF"
+        shadow: false
+      - type: "rect"
+        x: 258
+        y: 52
+        w: 117
+        h: 42
+        color: "#171B24"
+        hover-color: "#232A37"
+        border: 1
+        border-color: "#F97316"
+        actions:
+          - "player:keys"
+      - type: "text"
+        x: 267
+        y: 63
+        text: "&lKEYALL"
+        max-width: 103
+        color: "#F97316"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: 267
+        y: 74
+        text: "&f%dreamcore_keyall_time%"
+        max-width: 103
+        color: "#9CA3AF"
+        shadow: false
+      - type: "rect"
+        x: 8
+        y: 156
+        w: 368
+        h: 36
+        color: "#171B24"
+      - type: "text"
+        x: "center"
+        y: 162
+        text: "%koth_status%"
+        max-width: 356
+      - type: "text"
+        x: "center"
+        y: 175
+        text: "&7Rewards: &f%koth_next_rewards%"
+        max-width: 356
+        shadow: false
+      - type: "button"
+        x: 8
+        y: -8
+        w: 80
+        h: 18
+        text: "< Back"
+        color: "#171B24"
+        hover-color: "#232A37"
+        actions:
+          - "page:back"
+      - type: "button"
+        x: -8
+        y: -8
+        w: 100
+        h: 18
+        text: "All features"
+        color: "#171B24"
+        hover-color: "#232A37"
+        actions:
+          - "close"
+  land:
+    background: "none"
+    refresh: 20
+    elements:
+      - type: "rect"
+        x: 8
+        y: 8
+        w: 368
+        h: 36
+        color: "#11131A"
+      - type: "rect"
+        x: 8
+        y: 8
+        w: 3
+        h: 36
+        color: "#84CC16"
+        round: false
+      - type: "text"
+        x: 20
+        y: 14
+        text: "&lLAND"
+        scale: 2
+        color: "#84CC16"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: -18
+        y: 22
+        text: "&7Claims & teams"
+        max-width: 180
+        color: "#9CA3AF"
+        align: "right"
+      - type: "rect"
+        x: 8
+        y: 52
+        w: 117
+        h: 42
+        color: "#171B24"
+        hover-color: "#232A37"
+        border: 1
+        border-color: "#84CC16"
+        actions:
+          - "player:claim"
+      - type: "text"
+        x: 17
+        y: 63
+        text: "&lCLAIM"
+        max-width: 103
+        color: "#84CC16"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: 17
+        y: 74
+        text: "&7Protect land"
+        max-width: 103
+        color: "#9CA3AF"
+        shadow: false
+      - type: "rect"
+        x: 133
+        y: 52
+        w: 117
+        h: 42
+        color: "#171B24"
+        hover-color: "#232A37"
+        border: 1
+        border-color: "#84CC16"
+        actions:
+          - "player:trustlist"
+      - type: "text"
+        x: 142
+        y: 63
+        text: "&lTRUST LIST"
+        max-width: 103
+        color: "#84CC16"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: 142
+        y: 74
+        text: "&7Who can build"
+        max-width: 103
+        color: "#9CA3AF"
+        shadow: false
+      - type: "rect"
+        x: 258
+        y: 52
+        w: 117
+        h: 42
+        color: "#171B24"
+        hover-color: "#232A37"
+        border: 1
+        border-color: "#84CC16"
+        actions:
+          - "player:claimblocks"
+      - type: "text"
+        x: 267
+        y: 63
+        text: "&lCLAIM BLOCKS"
+        max-width: 103
+        color: "#84CC16"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: 267
+        y: 74
+        text: "&7How many left"
+        max-width: 103
+        color: "#9CA3AF"
+        shadow: false
+      - type: "rect"
+        x: 8
+        y: 102
+        w: 117
+        h: 42
+        color: "#171B24"
+        hover-color: "#232A37"
+        border: 1
+        border-color: "#84CC16"
+        actions:
+          - "player:team"
+      - type: "text"
+        x: 17
+        y: 113
+        text: "&lMY TEAM"
+        max-width: 103
+        color: "#84CC16"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: 17
+        y: 124
+        text: "&7Team menu"
+        max-width: 103
+        color: "#9CA3AF"
+        shadow: false
+      - type: "rect"
+        x: 133
+        y: 102
+        w: 117
+        h: 42
+        color: "#171B24"
+        hover-color: "#232A37"
+        border: 1
+        border-color: "#84CC16"
+        actions:
+          - "player:unclaim"
+      - type: "text"
+        x: 142
+        y: 113
+        text: "&lUNCLAIM"
+        max-width: 103
+        color: "#84CC16"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: 142
+        y: 124
+        text: "&7Free a claim"
+        max-width: 103
+        color: "#9CA3AF"
+        shadow: false
+      - type: "rect"
+        x: 258
+        y: 102
+        w: 117
+        h: 42
+        color: "#171B24"
+        hover-color: "#232A37"
+        border: 1
+        border-color: "#84CC16"
+        actions:
+          - "player:dlc help"
+      - type: "text"
+        x: 267
+        y: 113
+        text: "&lHELP"
+        max-width: 103
+        color: "#84CC16"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: 267
+        y: 124
+        text: "&7All commands"
+        max-width: 103
+        color: "#9CA3AF"
+        shadow: false
+      - type: "button"
+        x: 8
+        y: -8
+        w: 80
+        h: 18
+        text: "< Back"
+        color: "#171B24"
+        hover-color: "#232A37"
+        actions:
+          - "page:back"
+      - type: "button"
+        x: -8
+        y: -8
+        w: 100
+        h: 18
+        text: "All features"
+        color: "#171B24"
+        hover-color: "#232A37"
+        actions:
+          - "close"
+  storage:
+    background: "none"
+    refresh: 20
+    elements:
+      - type: "rect"
+        x: 8
+        y: 8
+        w: 368
+        h: 36
+        color: "#11131A"
+      - type: "rect"
+        x: 8
+        y: 8
+        w: 3
+        h: 36
+        color: "#60A5FA"
+        round: false
+      - type: "text"
+        x: 20
+        y: 14
+        text: "&lSTORAGE"
+        scale: 2
+        color: "#60A5FA"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: -18
+        y: 22
+        text: "&7Keep your stuff"
+        max-width: 180
+        color: "#9CA3AF"
+        align: "right"
+      - type: "rect"
+        x: 8
+        y: 52
+        w: 117
+        h: 42
+        color: "#171B24"
+        hover-color: "#232A37"
+        border: 1
+        border-color: "#60A5FA"
+        actions:
+          - "player:pv"
+      - type: "text"
+        x: 17
+        y: 63
+        text: "&lVAULTS"
+        max-width: 103
+        color: "#60A5FA"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: 17
+        y: 74
+        text: "&7/pv"
+        max-width: 103
+        color: "#9CA3AF"
+        shadow: false
+      - type: "rect"
+        x: 133
+        y: 52
+        w: 117
+        h: 42
+        color: "#171B24"
+        hover-color: "#232A37"
+        border: 1
+        border-color: "#60A5FA"
+        actions:
+          - "player:pv 1"
+      - type: "text"
+        x: 142
+        y: 63
+        text: "&lVAULT 1"
+        max-width: 103
+        color: "#60A5FA"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: 142
+        y: 74
+        text: "&7/pv 1"
+        max-width: 103
+        color: "#9CA3AF"
+        shadow: false
+      - type: "rect"
+        x: 258
+        y: 52
+        w: 117
+        h: 42
+        color: "#171B24"
+        hover-color: "#232A37"
+        border: 1
+        border-color: "#60A5FA"
+        actions:
+          - "player:pv 2"
+      - type: "text"
+        x: 267
+        y: 63
+        text: "&lVAULT 2"
+        max-width: 103
+        color: "#60A5FA"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: 267
+        y: 74
+        text: "&7/pv 2"
+        max-width: 103
+        color: "#9CA3AF"
+        shadow: false
+      - type: "rect"
+        x: 8
+        y: 102
+        w: 117
+        h: 42
+        color: "#171B24"
+        hover-color: "#232A37"
+        border: 1
+        border-color: "#60A5FA"
+        actions:
+          - "player:spawnertop"
+      - type: "text"
+        x: 17
+        y: 113
+        text: "&lSPAWNERS"
+        max-width: 103
+        color: "#60A5FA"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: 17
+        y: 124
+        text: "&f%dreamspawner_total_spawners% &7owned"
+        max-width: 103
+        color: "#9CA3AF"
+        shadow: false
+      - type: "rect"
+        x: 133
+        y: 102
+        w: 117
+        h: 42
+        color: "#171B24"
+        hover-color: "#232A37"
+        border: 1
+        border-color: "#60A5FA"
+        actions:
+          - "player:spawnertop"
+      - type: "text"
+        x: 142
+        y: 113
+        text: "&lSPAWNER TOP"
+        max-width: 103
+        color: "#60A5FA"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: 142
+        y: 124
+        text: "&7Best owners"
+        max-width: 103
+        color: "#9CA3AF"
+        shadow: false
+      - type: "rect"
+        x: 258
+        y: 102
+        w: 117
+        h: 42
+        color: "#171B24"
+        hover-color: "#232A37"
+        border: 1
+        border-color: "#60A5FA"
+        actions:
+          - "player:ec"
+      - type: "text"
+        x: 267
+        y: 113
+        text: "&lENDER CHEST"
+        max-width: 103
+        color: "#60A5FA"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: 267
+        y: 124
+        text: "&7/ec"
+        max-width: 103
+        color: "#9CA3AF"
+        shadow: false
+      - type: "button"
+        x: 8
+        y: -8
+        w: 80
+        h: 18
+        text: "< Back"
+        color: "#171B24"
+        hover-color: "#232A37"
+        actions:
+          - "page:back"
+      - type: "button"
+        x: -8
+        y: -8
+        w: 100
+        h: 18
+        text: "All features"
+        color: "#171B24"
+        hover-color: "#232A37"
+        actions:
+          - "close"
+  me:
+    background: "none"
+    refresh: 20
+    elements:
+      - type: "rect"
+        x: 8
+        y: 8
+        w: 368
+        h: 36
+        color: "#11131A"
+      - type: "rect"
+        x: 8
+        y: 8
+        w: 3
+        h: 36
+        color: "#FBBF24"
+        round: false
+      - type: "text"
+        x: 20
+        y: 14
+        text: "&lMY STATS"
+        scale: 2
+        color: "#FBBF24"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: -18
+        y: 22
+        text: "&7{player}"
+        max-width: 180
+        color: "#9CA3AF"
+        align: "right"
+      - type: "rect"
+        x: 8
+        y: 52
+        w: 117
+        h: 46
+        color: "#171B24"
+        border: 1
+        border-color: "#2A3140"
+      - type: "text"
+        x: 66
+        y: 59
+        text: "PLAYTIME"
+        max-width: 109
+        color: "#9CA3AF"
+        align: "center"
+        shadow: false
+      - type: "text"
+        x: 66
+        y: 72
+        text: "{stat_playtime}"
+        max-width: 109
+        scale: 2
+        color: "#FBBF24"
+        align: "center"
+        shadow-color: "#05060A"
+      - type: "rect"
+        x: 133
+        y: 52
+        w: 117
+        h: 46
+        color: "#171B24"
+        border: 1
+        border-color: "#2A3140"
+      - type: "text"
+        x: 191
+        y: 59
+        text: "KILLS"
+        max-width: 109
+        color: "#9CA3AF"
+        align: "center"
+        shadow: false
+      - type: "text"
+        x: 191
+        y: 72
+        text: "{stat_kills}"
+        max-width: 109
+        scale: 2
+        color: "#34D399"
+        align: "center"
+        shadow-color: "#05060A"
+      - type: "rect"
+        x: 258
+        y: 52
+        w: 117
+        h: 46
+        color: "#171B24"
+        border: 1
+        border-color: "#2A3140"
+      - type: "text"
+        x: 316
+        y: 59
+        text: "DEATHS"
+        max-width: 109
+        color: "#9CA3AF"
+        align: "center"
+        shadow: false
+      - type: "text"
+        x: 316
+        y: 72
+        text: "{stat_deaths}"
+        max-width: 109
+        scale: 2
+        color: "#F43F5E"
+        align: "center"
+        shadow-color: "#05060A"
+      - type: "rect"
+        x: 8
+        y: 106
+        w: 117
+        h: 46
+        color: "#171B24"
+        border: 1
+        border-color: "#2A3140"
+      - type: "text"
+        x: 66
+        y: 113
+        text: "MOBS KILLED"
+        max-width: 109
+        color: "#9CA3AF"
+        align: "center"
+        shadow: false
+      - type: "text"
+        x: 66
+        y: 126
+        text: "{stat_mobs}"
+        max-width: 109
+        scale: 2
+        color: "#F97316"
+        align: "center"
+        shadow-color: "#05060A"
+      - type: "rect"
+        x: 133
+        y: 106
+        w: 117
+        h: 46
+        color: "#171B24"
+        border: 1
+        border-color: "#2A3140"
+      - type: "text"
+        x: 191
+        y: 113
+        text: "PLACED"
+        max-width: 109
+        color: "#9CA3AF"
+        align: "center"
+        shadow: false
+      - type: "text"
+        x: 191
+        y: 126
+        text: "{stat_placed}"
+        max-width: 109
+        scale: 2
+        color: "#60A5FA"
+        align: "center"
+        shadow-color: "#05060A"
+      - type: "rect"
+        x: 258
+        y: 106
+        w: 117
+        h: 46
+        color: "#171B24"
+        border: 1
+        border-color: "#2A3140"
+      - type: "text"
+        x: 316
+        y: 113
+        text: "MINED"
+        max-width: 109
+        color: "#9CA3AF"
+        align: "center"
+        shadow: false
+      - type: "text"
+        x: 316
+        y: 126
+        text: "{stat_broken}"
+        max-width: 109
+        scale: 2
+        color: "#C084FC"
+        align: "center"
+        shadow-color: "#05060A"
+      - type: "button"
+        x: 8
+        y: 162
+        w: 368
+        h: 24
+        text: "&lFULL LEADERBOARD"
+        color: "#B45309"
+        hover-color: "#D97706"
+        actions:
+          - "player:leaderboard"
+      - type: "button"
+        x: 8
+        y: -8
+        w: 80
+        h: 18
+        text: "< Back"
+        color: "#171B24"
+        hover-color: "#232A37"
+        actions:
+          - "page:back"

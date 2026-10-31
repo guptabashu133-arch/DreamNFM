@@ -1,0 +1,301 @@
+# DUELS - 1v1 / 2v2 / ranked
+# Commands are examples: set them to your duels plugin (player:<command>).
+# Made for a 3x2 screen:  /screen create <name> 3 2 duels
+#   or put it on an existing screen:  /screen design <screen> duels
+# Background is transparent (shows the wall) - change 'background: none' to a colour like "#11131A".
+# Edit text/colours/actions below, then /screen reload <screen>.
+start: home
+click-sound: ui.button.click
+pages:
+  home:
+    background: "none"
+    refresh: 20
+    elements:
+      - type: "rect"
+        x: 8
+        y: 8
+        w: 368
+        h: 36
+        color: "#11131A"
+      - type: "rect"
+        x: 8
+        y: 8
+        w: 3
+        h: 36
+        color: "#F43F5E"
+        round: false
+      - type: "text"
+        x: 20
+        y: 14
+        text: "&lDUELS"
+        scale: 2
+        color: "#F43F5E"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: -18
+        y: 22
+        text: "&7Ready, {player}?"
+        max-width: 180
+        color: "#9CA3AF"
+        align: "right"
+      # BIG 1v1 CARD - change the text and the command (player:...) to your duels plugin
+      - type: "rect"
+        x: 8
+        y: 52
+        w: 368
+        h: 58
+        color: "#171B24"
+        hover-color: "#232A37"
+        border: 1
+        border-color: "#F43F5E"
+        actions:
+          - "player:duel"
+      - type: "text"
+        x: "center"
+        y: 60
+        text: "&l1v1 DUELS"
+        scale: 3
+        color: "#FFFFFF"
+        shadow-color: "#4C0519"
+      - type: "text"
+        x: "center"
+        y: 92
+        text: "&7Click to queue  &8|  &7fast fights, fair kits"
+        shadow: false
+      - type: "rect"
+        x: 8
+        y: 118
+        w: 117
+        h: 44
+        color: "#171B24"
+        hover-color: "#232A37"
+        border: 1
+        border-color: "#F43F5E"
+        actions:
+          - "player:duel 2v2"
+      - type: "text"
+        x: 17
+        y: 130
+        text: "&l2v2"
+        max-width: 103
+        color: "#F43F5E"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: 17
+        y: 141
+        text: "&7Team up"
+        max-width: 103
+        color: "#9CA3AF"
+        shadow: false
+      - type: "rect"
+        x: 133
+        y: 118
+        w: 117
+        h: 44
+        color: "#171B24"
+        hover-color: "#232A37"
+        border: 1
+        border-color: "#F43F5E"
+        actions:
+          - "player:duel ranked"
+      - type: "text"
+        x: 142
+        y: 130
+        text: "&lRANKED"
+        max-width: 103
+        color: "#F43F5E"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: 142
+        y: 141
+        text: "&7Climb the ladder"
+        max-width: 103
+        color: "#9CA3AF"
+        shadow: false
+      - type: "rect"
+        x: 258
+        y: 118
+        w: 117
+        h: 44
+        color: "#171B24"
+        hover-color: "#232A37"
+        border: 1
+        border-color: "#F43F5E"
+        actions:
+          - "player:party"
+      - type: "text"
+        x: 267
+        y: 130
+        text: "&lPARTY"
+        max-width: 103
+        color: "#F43F5E"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: 267
+        y: 141
+        text: "&7Fight your friends"
+        max-width: 103
+        color: "#9CA3AF"
+        shadow: false
+      - type: "button"
+        x: 8
+        y: 170
+        w: 117
+        h: 22
+        text: "Spectate"
+        color: "#3F1D2B"
+        hover-color: "#5B2438"
+        actions:
+          - "player:spectate"
+      - type: "button"
+        x: 133
+        y: 170
+        w: 117
+        h: 22
+        text: "Kit editor"
+        color: "#3F1D2B"
+        hover-color: "#5B2438"
+        actions:
+          - "player:kiteditor"
+      - type: "button"
+        x: 258
+        y: 170
+        w: 117
+        h: 22
+        text: "My stats"
+        color: "#3F1D2B"
+        hover-color: "#5B2438"
+        actions:
+          - "page:stats"
+      - type: "rect"
+        x: 8
+        y: -8
+        w: 368
+        h: 16
+        color: "#11131A"
+      - type: "text"
+        x: "center"
+        y: -12
+        text: "&7Online &f{online}  &8|  &7Ping &f{ping}ms  &8|  &7Kills &f{stat_kills}"
+        color: "#9CA3AF"
+  stats:
+    background: "none"
+    refresh: 20
+    elements:
+      - type: "rect"
+        x: 8
+        y: 8
+        w: 368
+        h: 36
+        color: "#11131A"
+      - type: "rect"
+        x: 8
+        y: 8
+        w: 3
+        h: 36
+        color: "#F43F5E"
+        round: false
+      - type: "text"
+        x: 20
+        y: 14
+        text: "&lMY STATS"
+        scale: 2
+        color: "#F43F5E"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: -18
+        y: 22
+        text: "&7{player}"
+        max-width: 180
+        color: "#9CA3AF"
+        align: "right"
+      - type: "rect"
+        x: 8
+        y: 54
+        w: 117
+        h: 46
+        color: "#171B24"
+        border: 1
+        border-color: "#2A3140"
+      - type: "text"
+        x: 66
+        y: 61
+        text: "KILLS"
+        max-width: 109
+        color: "#9CA3AF"
+        align: "center"
+        shadow: false
+      - type: "text"
+        x: 66
+        y: 74
+        text: "{stat_kills}"
+        max-width: 109
+        scale: 2
+        color: "#34D399"
+        align: "center"
+        shadow-color: "#05060A"
+      - type: "rect"
+        x: 133
+        y: 54
+        w: 117
+        h: 46
+        color: "#171B24"
+        border: 1
+        border-color: "#2A3140"
+      - type: "text"
+        x: 191
+        y: 61
+        text: "DEATHS"
+        max-width: 109
+        color: "#9CA3AF"
+        align: "center"
+        shadow: false
+      - type: "text"
+        x: 191
+        y: 74
+        text: "{stat_deaths}"
+        max-width: 109
+        scale: 2
+        color: "#F43F5E"
+        align: "center"
+        shadow-color: "#05060A"
+      - type: "rect"
+        x: 258
+        y: 54
+        w: 117
+        h: 46
+        color: "#171B24"
+        border: 1
+        border-color: "#2A3140"
+      - type: "text"
+        x: 316
+        y: 61
+        text: "PLAYTIME"
+        max-width: 109
+        color: "#9CA3AF"
+        align: "center"
+        shadow: false
+      - type: "text"
+        x: 316
+        y: 74
+        text: "{stat_playtime}"
+        max-width: 109
+        scale: 2
+        color: "#FBBF24"
+        align: "center"
+        shadow-color: "#05060A"
+      - type: "head"
+        player: "{player}"
+        x: "center"
+        y: 110
+        size: 48
+      - type: "button"
+        x: 8
+        y: -8
+        w: 80
+        h: 18
+        text: "< Back"
+        color: "#3F1D2B"
+        hover-color: "#5B2438"
+        actions:
+          - "page:back"

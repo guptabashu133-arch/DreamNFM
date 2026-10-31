@@ -134,6 +134,16 @@ public final class Canvas {
      * (&l), and an optional 1px shadow. Returns the drawn width.
      */
     public int text(String text, int x, int y, int scale, int rgb, boolean shadow, Align align) {
+        return text(text, x, y, scale, rgb, shadow ? -1 : -2, align);
+    }
+
+    /**
+     * shadowRgb: -2 = no shadow, -1 = automatic (a dark version of each
+     * colour), otherwise one fixed shadow colour. The shadow is offset by
+     * one font pixel (scale pixels).
+     */
+    public int text(String text, int x, int y, int scale, int rgb, int shadowRgb, Align align) {
+        boolean shadow = shadowRgb != -2;
         int s = Math.max(1, scale);
         int w = textWidth(text, s);
         int startX = switch (align) {
@@ -141,12 +151,12 @@ public final class Canvas {
             case CENTER -> x - w / 2;
             case RIGHT -> x - w;
         };
-        if (shadow) drawRun(text, startX + s, y + s, s, rgb, true);
-        drawRun(text, startX, y, s, rgb, false);
+        if (shadow) drawRun(text, startX + s, y + s, s, rgb, true, shadowRgb);
+        drawRun(text, startX, y, s, rgb, false, -1);
         return w;
     }
 
-    private void drawRun(String text, int x, int y, int s, int baseRgb, boolean shadow) {
+    private void drawRun(String text, int x, int y, int s, int baseRgb, boolean shadow, int fixedShadow) {
         int rgb = baseRgb;
         boolean bold = false;
         int cx = x;
@@ -196,7 +206,7 @@ public final class Canvas {
             }
             MapFont.CharacterSprite sp = sprite(ch);
             if (sp == null) continue;
-            byte c = Palette.of(shadow ? Palette.darker(rgb, 0.25) : rgb);
+            byte c = Palette.of(shadow ? (fixedShadow >= 0 ? fixedShadow : Palette.darker(rgb, 0.25)) : rgb);
             for (int py = 0; py < sp.getHeight(); py++) {
                 for (int px = 0; px < sp.getWidth(); px++) {
                     if (!sp.get(py, px)) continue;

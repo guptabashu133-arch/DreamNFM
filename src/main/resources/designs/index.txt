@@ -1,0 +1,16 @@
+duels
+homes
+welcome
+stats
+leaderboard
+store
+market
+crates
+koth
+rtp
+land
+vaults
+spawners
+bounty
+coinflip
+features

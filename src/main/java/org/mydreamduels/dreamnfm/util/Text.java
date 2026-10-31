@@ -22,9 +22,44 @@ public final class Text {
         prefix = color(raw == null ? "" : raw);
     }
 
+    private static final Pattern MINI = Pattern.compile("</?([a-z_]+|#[0-9a-fA-F]{6})>");
+    private static final java.util.Map<String, String> MINI_CODES = java.util.Map.ofEntries(
+            java.util.Map.entry("black", "&0"), java.util.Map.entry("dark_blue", "&1"), java.util.Map.entry("dark_green", "&2"),
+            java.util.Map.entry("dark_aqua", "&3"), java.util.Map.entry("dark_red", "&4"), java.util.Map.entry("dark_purple", "&5"),
+            java.util.Map.entry("gold", "&6"), java.util.Map.entry("gray", "&7"), java.util.Map.entry("grey", "&7"),
+            java.util.Map.entry("dark_gray", "&8"), java.util.Map.entry("dark_grey", "&8"), java.util.Map.entry("blue", "&9"),
+            java.util.Map.entry("green", "&a"), java.util.Map.entry("aqua", "&b"), java.util.Map.entry("red", "&c"),
+            java.util.Map.entry("light_purple", "&d"), java.util.Map.entry("yellow", "&e"), java.util.Map.entry("white", "&f"),
+            java.util.Map.entry("bold", "&l"), java.util.Map.entry("b", "&l"), java.util.Map.entry("italic", "&o"),
+            java.util.Map.entry("i", "&o"), java.util.Map.entry("underlined", "&n"), java.util.Map.entry("u", "&n"),
+            java.util.Map.entry("strikethrough", "&m"), java.util.Map.entry("reset", "&r"));
+
+    /**
+     * Simple MiniMessage colour tags (as other plugins' placeholders return
+     * them, e.g. {@code <#7CFC9B>} or {@code <white>}) to &-codes. Closing
+     * tags are dropped; unknown tags stay as they are.
+     */
+    static String mini(String text) {
+        if (text.indexOf('<') < 0) return text;
+        Matcher m = MINI.matcher(text);
+        StringBuilder sb = new StringBuilder();
+        while (m.find()) {
+            String tag = m.group(1).toLowerCase(java.util.Locale.ROOT);
+            boolean closing = m.group().startsWith("</");
+            String rep;
+            if (tag.startsWith("#")) rep = closing ? "" : "&" + tag;
+            else if (MINI_CODES.containsKey(tag)) rep = closing ? "&r" : MINI_CODES.get(tag);
+            else rep = m.group();
+            m.appendReplacement(sb, Matcher.quoteReplacement(rep));
+        }
+        m.appendTail(sb);
+        return sb.toString();
+    }
+
     @SuppressWarnings("deprecation")
     public static String color(String text) {
         if (text == null) return "";
+        text = mini(text);
         Matcher m = HEX.matcher(text);
         StringBuilder sb = new StringBuilder();
         while (m.find()) {

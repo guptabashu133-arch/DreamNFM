@@ -19,38 +19,46 @@ final class Templates {
     }
 
     static String defaultPages(int width, int height) {
-        boolean small = width * 128 < 256;
-        int title = small ? 1 : 2;
+        boolean s = width * 128 < 256;
+        int title = s ? 1 : 2;
+        int graphY = s ? 58 : 82, graphH = Math.max(24, height * 128 - graphY - 30);
         return """
-                # Pages for this screen. Edit, then /screen reload <name>.
+                # Starter page. Edit, then /screen reload <name>.
+                # Want something ready-made? /screen designs  ->  /screen design <screen> <design>
                 # Positions/sizes: 20 (pixels), -20 (from right/bottom), 50%% (of screen), center.
                 # Element types: rect, text, lines, image, button, head, progress, graph.
-                # Text supports &colours, &#RRGGBB, {player} {online} {max} {time} {date} {world} {ping},
-                # {countdown:2026-12-31 20:00}, PlaceholderAPI %%placeholders%% and live status rules:
-                #   <status:%%server_online%%;0=&cEmpty;1-10=&eQuiet;default=&aBusy>
-                # Colours can be live too: color: "<status:{online};0=#EF4444;default=#22C55E>"
+                # Text: &colours, &#RRGGBB, {player} {online} {max} {time} {date} {world} {ping} {tps} {mspt} {uptime},
+                #   {countdown:2026-12-31 20:00}, %%placeholderapi%% and live status rules:
+                #   <status:{online};0=&cEmpty;1-10=&eQuiet;default=&aBusy>
                 # Button actions: page:<page>  page:back  close  message:..  player:cmd  console:cmd
                 #                 sound:<key>  teleport:world,x,y,z  server:<bungee-server>
+                # background: none = see-through (the wall shows). Use a colour like "#11131A" for a solid screen.
                 start: home
-                # idle-page: sleep        # shown to players further away than wake-range
-                # wake-range: 10
                 click-sound: ui.button.click
                 pages:
                   home:
-                    background: "#14161F"
-                    refresh: 20            # ticks between redraws (for placeholders)
+                    background: none
+                    refresh: 20
                     elements:
                       - type: rect
-                        x: 0
-                        y: 0
-                        w: 100%%
+                        x: center
+                        y: 4
+                        w: 96%%
                         h: %d
-                        color: "#1F2433"
+                        color: "#11131A"
                       - type: text
                         x: center
                         y: %d
                         scale: %d
-                        text: "&#7AA2FF&lDREAM &f&lNETWORK"
+                        text: "&lDREAM &f&lNETWORK"
+                        color: "#A78BFA"
+                        shadow-color: "#05060A"
+                      - type: rect
+                        x: center
+                        y: %d
+                        w: 96%%
+                        h: %d
+                        color: "#171B24"
                       - type: text
                         x: center
                         y: %d
@@ -58,23 +66,26 @@ final class Templates {
                       - type: text
                         x: center
                         y: %d
-                        text: "<status:{online};0=&cNobody online;1-5=&eQuiet right now;default=&aBusy!> &8| &f{online}&7/&f{max}"
+                        text: "<status:{online};0=&cNobody online;1-5=&eQuiet;default=&aBusy!> &8| &f{online}&7/&f{max}"
+                        shadow: false
                       - type: button
                         x: center
                         y: 50%%
                         w: 60%%
                         h: 26
                         text: "&lPLAY"
-                        color: "#22C55E"
+                        color: "#6D28D9"
+                        hover-color: "#7C3AED"
                         actions:
-                          - "message:&aSend players anywhere - edit this button in screens/<name>.yml"
+                          - "message:&aEdit this button in screens/<name>.yml"
                       - type: button
                         x: center
                         y: -18
                         w: 60%%
                         h: 16
                         text: "Server info"
-                        color: "#3B82F6"
+                        color: "#171B24"
+                        hover-color: "#232A37"
                         actions:
                           - "page:info"
                       - type: progress
@@ -84,22 +95,31 @@ final class Templates {
                         h: 5
                         value: "{online}"
                         max: "{max}"
-                        color: "<status:{online};0=#EF4444;default=#22C55E>"
+                        color: "#A78BFA"
+                        background: "#11131A"
                   info:
-                    background: "#14161F"
+                    background: none
                     refresh: 20
                     elements:
                       - type: rect
-                        x: 0
-                        y: 0
-                        w: 100%%
+                        x: center
+                        y: 4
+                        w: 96%%
                         h: %d
-                        color: "#1F2433"
+                        color: "#11131A"
                       - type: text
                         x: center
                         y: %d
                         scale: %d
-                        text: "&f&lSERVER INFO"
+                        text: "&lSERVER INFO"
+                        color: "#A78BFA"
+                        shadow-color: "#05060A"
+                      - type: rect
+                        x: center
+                        y: %d
+                        w: 96%%
+                        h: 36
+                        color: "#171B24"
                       - type: head
                         player: "{player}"
                         x: 8
@@ -111,33 +131,36 @@ final class Templates {
                         align: left
                         lines:
                           - "&f{player}"
-                          - "&7Ping: &f{ping}ms"
-                          - "&7Time: &f{time}"
-                      - type: image
-                        file: example.png
-                        x: -8
-                        y: -8
-                        w: 16
-                        h: 16
+                          - "&7Ping &f{ping}ms"
+                          - "&7TPS &f{tps}"
                       - type: graph
                         source: online
                         x: center
                         y: %d
-                        w: 90%%
+                        w: 96%%
                         h: %d
+                        background: "#171B24"
+                        color: "#A78BFA"
                       - type: button
-                        x: 8
-                        y: -8
+                        x: 6
+                        y: -6
                         w: 50
                         h: 16
                         text: "< Back"
-                        color: "#475569"
+                        color: "#171B24"
+                        hover-color: "#232A37"
                         actions:
                           - "page:back"
+                      - type: image
+                        file: example.png
+                        x: -6
+                        y: -6
+                        w: 16
+                        h: 16
                 """.formatted(
-                small ? 14 : 30, small ? 3 : 8, title, small ? 18 : 36, small ? 28 : 48,
-                small ? 14 : 30, small ? 3 : 8, title, small ? 18 : 38, small ? 20 : 42,
-                small ? 54 : 78, Math.max(24, height * 128 - (small ? 54 : 78) - 30));
+                s ? 14 : 28, s ? 7 : 11, title, s ? 20 : 37, s ? 20 : 26, s ? 22 : 40, s ? 31 : 52,
+                s ? 14 : 28, s ? 7 : 11, title, s ? 20 : 36, s ? 22 : 38, s ? 23 : 39,
+                graphY, graphH);
     }
 
     static void writeDefault(File file, int width, int height) {

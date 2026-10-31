@@ -14,11 +14,11 @@ public final class Element {
     public enum Type { RECT, TEXT, LINES, IMAGE, BUTTON, HEAD, PROGRESS, GRAPH }
 
     public final Type type;
-    public final Dim x, y, w, h;
+    public final Dim x, y, w, h, maxWidth;
     public final String text;
     public final List<String> lines;
     public final int scale, spacing, borderSize, iconSize;
-    public final String color, hoverColor, textColor, borderColor, background;
+    public final String color, hoverColor, textColor, borderColor, background, shadowColor;
     public final boolean shadow, round;
     public final Canvas.Align align;
     public final String file, icon, player, value, max, source, permission;
@@ -42,6 +42,7 @@ public final class Element {
         this.w = Dim.parse(n.raw(n.has("w") ? "w" : "width"), defW);
         this.h = Dim.parse(n.raw(n.has("h") ? "h" : "height"), type == Type.HEAD ? Dim.parse(n.raw("size"), new Dim(32, Dim.Kind.ABS)) : defH);
         this.text = n.str("text", type == Type.BUTTON ? "Button" : "");
+        this.maxWidth = Dim.parse(n.raw("max-width"), Dim.AUTO);
         this.lines = n.list("lines");
         this.scale = Math.max(1, Math.min(8, n.integer("scale", 1)));
         this.spacing = Math.max(0, n.integer("spacing", 1));
@@ -59,6 +60,7 @@ public final class Element {
         this.borderColor = n.str("border-color", "#000000");
         this.background = n.str("background", type == Type.PROGRESS || type == Type.GRAPH ? "#2A2F3E" : null);
         this.shadow = n.bool("shadow", type != Type.RECT);
+        this.shadowColor = n.str("shadow-color", null);
         this.round = n.bool("round", type == Type.BUTTON || type == Type.PROGRESS);
         String a = n.str("align", null);
         this.align = a == null ? (x.isCenter() ? Canvas.Align.CENTER : Canvas.Align.LEFT) : switch (a.toLowerCase(Locale.ROOT)) {

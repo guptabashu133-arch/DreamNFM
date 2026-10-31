@@ -47,13 +47,14 @@ public final class ScreenManager implements Listener {
     private final Map<String, Screen> screens = new ConcurrentHashMap<>();
     private final ImageStore images;
     private final Heads heads;
+    private final Designs designs;
     private final Deque<Integer> freeMaps = new ArrayDeque<>();
 
     private record Focus(Screen screen, CancelHandle task) {
     }
 
     private final Map<UUID, Focus> focus = new ConcurrentHashMap<>();
-    private final Deque<Double> online = new ArrayDeque<>(), tps = new ArrayDeque<>();
+    private final Deque<Double> online = new ArrayDeque<>(), tps = new ArrayDeque<>(), mspt = new ArrayDeque<>();
     private CancelHandle sampler;
 
     public ScreenManager(DreamNFM plugin) {
@@ -61,10 +62,15 @@ public final class ScreenManager implements Listener {
         this.file = new File(plugin.getDataFolder(), "screens.yml");
         this.images = new ImageStore(plugin);
         this.heads = new Heads(plugin);
+        this.designs = new Designs(plugin);
     }
 
     public ImageStore images() {
         return images;
+    }
+
+    public Designs designs() {
+        return designs;
     }
 
     Heads heads() {
@@ -76,6 +82,7 @@ public final class ScreenManager implements Listener {
     public void load() {
         images.dir().mkdirs();
         new File(plugin.getDataFolder(), "screens").mkdirs();
+        designs.exportBundled();
         YamlConfiguration y = YamlConfiguration.loadConfiguration(file);
         synchronized (freeMaps) {
             freeMaps.clear();
@@ -89,6 +96,7 @@ public final class ScreenManager implements Listener {
                 try {
                     Screen sc = Screen.load(plugin, name, s);
                     sc.reloadPages();
+                    sc.rebuildIcon();
                     screens.put(name.toLowerCase(Locale.ROOT), sc);
                     plugin.tracker().register(sc);
                     attachMaps(sc);
@@ -185,9 +193,22 @@ public final class ScreenManager implements Listener {
 
     /** Creates, writes a starter page if there is none, registers and sets up maps. */
     public Screen create(String name, String world, Geometry g) {
+        return create(name, world, g, null);
+    }
+
+    /** design = a file in designs/ to start from, or null for the built-in starter page. */
+    public Screen create(String name, String world, Geometry g, String design) {
         Screen s = new Screen(plugin, name, world, g, null);
         File pages = s.pagesFile();
-        if (!pages.exists()) Templates.writeDefault(pages, g.width(), g.height());
+        File src = design == null ? null : designs.file(design);
+        if (src != null) {
+            pages.getParentFile().mkdirs();
+            try {
+                java.nio.file.Files.copy(src.toPath(), pages.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+            } catch (java.io.IOException e) {
+                throw new IllegalStateException("Could not copy design " + design + ": " + e.getMessage(), e);
+            }
+        } else if (!pages.exists()) Templates.writeDefault(pages, g.width(), g.height());
         Templates.ensureExampleImage(images.dir());
         s.reloadPages();
         screens.put(name.toLowerCase(Locale.ROOT), s);
@@ -270,12 +291,9 @@ public final class ScreenManager implements Listener {
 
     private void sample() {
         add(online, Bukkit.getOnlinePlayers().size());
-        try {
-            double[] t = Bukkit.getTPS();
-            if (t != null && t.length > 0) add(tps, Math.min(20, t[0]));
-        } catch (Throwable ignored) {
-            // Folia has no single server TPS
-        }
+        double[] st = org.mydreamduels.dreamnfm.util.ServerStats.now();
+        if (!Double.isNaN(st[0])) add(tps, st[0]);
+        if (!Double.isNaN(st[1])) add(mspt, st[1]);
     }
 
     private static void add(Deque<Double> d, double v) {
@@ -286,7 +304,7 @@ public final class ScreenManager implements Listener {
     }
 
     double[] samples(String source) {
-        Deque<Double> d = "tps".equals(source) ? tps : online;
+        Deque<Double> d = "tps".equals(source) ? tps : "mspt".equals(source) ? mspt : online;
         synchronized (d) {
             double[] out = new double[d.size()];
             int i = 0;

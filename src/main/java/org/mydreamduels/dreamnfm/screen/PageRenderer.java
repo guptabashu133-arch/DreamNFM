@@ -88,6 +88,12 @@ public final class PageRenderer {
         return s.replaceAll("(?i)[§&][0-9a-fk-orx]", "").trim();
     }
 
+    /** -2 none, -1 automatic, else the element's shadow-color. */
+    static int shadow(Context ctx, Element e) {
+        if (!e.shadow) return -2;
+        return e.shadowColor == null ? -1 : rgb(ctx, e.shadowColor, -1);
+    }
+
     static int lighter(int rgb) {
         int r = (rgb >> 16) & 0xFF, g = (rgb >> 8) & 0xFF, b = rgb & 0xFF;
         r += (255 - r) / 4;
@@ -113,12 +119,12 @@ public final class PageRenderer {
                 return new int[]{x, y, w, h};
             }
             case TEXT -> {
-                String t = ctx.text(e.text);
+                String t = e.maxWidth.isAuto() ? ctx.text(e.text) : fit(ctx.text(e.text), e.maxWidth.size(W, W), e.scale);
                 int w = Canvas.textWidth(t, e.scale), h = 8 * e.scale;
                 int anchor = e.x.isCenter() ? W / 2 : e.x.pos(W, 0);
                 int y = e.y.pos(H, h);
                 int col = hovered && e.clickable() ? rgb(ctx, e.hoverColor, 0xFFFF55) : rgb(ctx, e.color, 0xFFFFFF);
-                c.text(t, anchor, y, e.scale, col, e.shadow, e.align);
+                c.text(t, anchor, y, e.scale, col, shadow(ctx, e), e.align);
                 int left = switch (e.align) {
                     case LEFT -> anchor;
                     case CENTER -> anchor - w / 2;
@@ -134,8 +140,8 @@ public final class PageRenderer {
                 int col = rgb(ctx, e.color, 0xFFFFFF);
                 int maxW = 0;
                 for (int i = 0; i < e.lines.size(); i++) {
-                    String t = ctx.text(e.lines.get(i));
-                    maxW = Math.max(maxW, c.text(t, anchor, y + i * lh, e.scale, col, e.shadow, e.align));
+                    String t = e.maxWidth.isAuto() ? ctx.text(e.lines.get(i)) : fit(ctx.text(e.lines.get(i)), e.maxWidth.size(W, W), e.scale);
+                    maxW = Math.max(maxW, c.text(t, anchor, y + i * lh, e.scale, col, shadow(ctx, e), e.align));
                 }
                 int left = e.align == Canvas.Align.LEFT ? anchor : e.align == Canvas.Align.CENTER ? anchor - maxW / 2 : anchor - maxW;
                 return new int[]{left, y, maxW, total};
@@ -188,7 +194,7 @@ public final class PageRenderer {
                 }
                 int tx = x + (w - iconW - tw) / 2 + iconW;
                 int ty = y + shift + (h - 7 * e.scale) / 2;
-                c.text(t, tx, ty, e.scale, rgb(ctx, e.textColor, 0xFFFFFF), e.shadow, Canvas.Align.LEFT);
+                c.text(t, tx, ty, e.scale, rgb(ctx, e.textColor, 0xFFFFFF), shadow(ctx, e), Canvas.Align.LEFT);
                 return new int[]{x, y, w, h + 2};
             }
             case HEAD -> {
@@ -236,7 +242,7 @@ public final class PageRenderer {
                 c.rect(x, y, w, h, back);
                 int line = rgb(ctx, e.color, 0x22C55E);
                 double[] s = ctx.samples(e.source);
-                String label = e.text.isEmpty() ? (e.source.equals("tps") ? "TPS" : "Online") : ctx.text(e.text);
+                String label = e.text.isEmpty() ? (e.source.equals("tps") ? "TPS" : e.source.equals("mspt") ? "MSPT" : "Online") : ctx.text(e.text);
                 int top = y + 12, bottom = y + h - 3;
                 if (s == null || s.length == 0 || bottom - top < 4 || w < 8) {
                     c.text(label + ": n/a", x + 3, y + 3, 1, 0xAAAAAA, false, Canvas.Align.LEFT);
@@ -250,6 +256,9 @@ public final class PageRenderer {
                 if (e.source.equals("tps")) {
                     min = Math.min(min, 0);
                     max = Math.max(max, 20);
+                } else if (e.source.equals("mspt")) {
+                    min = 0;
+                    max = Math.max(max, 50);
                 } else {
                     min = 0;
                     max = Math.max(max, 1);
@@ -273,12 +282,26 @@ public final class PageRenderer {
                     prevX = px;
                     prevY = py;
                 }
-                String now = e.source.equals("tps") ? String.format(java.util.Locale.ROOT, "%.1f", s[n - 1]) : String.valueOf((int) s[n - 1]);
+                String now = e.source.equals("online") ? String.valueOf((int) s[n - 1]) : String.format(java.util.Locale.ROOT, "%.1f", s[n - 1]);
                 c.text(label + ": " + now, x + 3, y + 3, 1, 0xFFFFFF, true, Canvas.Align.LEFT);
                 return new int[]{x, y, w, h};
             }
         }
         return null;
+    }
+
+    /** Cuts text (keeping colour codes intact) so it fits in max pixels, ending with "..". */
+    static String fit(String t, int max, int scale) {
+        if (max <= 0 || Canvas.textWidth(t, scale) <= max) return t;
+        String s = t;
+        while (!s.isEmpty() && Canvas.textWidth(s + "..", scale) > max) {
+            s = s.substring(0, s.length() - 1);
+            // never leave half a colour code (section sign or a section-x hex run)
+            while (!s.isEmpty() && (s.charAt(s.length() - 1) == '\u00a7' || s.charAt(s.length() - 1) == '&')) s = s.substring(0, s.length() - 1);
+            int sec = s.lastIndexOf("\u00a7x");
+            if (sec >= 0 && s.length() - sec < 14) s = s.substring(0, sec);
+        }
+        return s + "..";
     }
 
     static double number(String s) {

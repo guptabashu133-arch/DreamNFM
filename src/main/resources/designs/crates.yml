@@ -1,0 +1,146 @@
+# CRATES - Dreamcrates
+# Keys come from %oc_...% (PlaceholderAPI).
+# Made for a 3x2 screen:  /screen create <name> 3 2 crates
+#   or put it on an existing screen:  /screen design <screen> crates
+# Background is transparent (shows the wall) - change 'background: none' to a colour like "#11131A".
+# Edit text/colours/actions below, then /screen reload <screen>.
+start: home
+click-sound: ui.button.click
+pages:
+  home:
+    background: "none"
+    refresh: 20
+    elements:
+      - type: "rect"
+        x: 8
+        y: 8
+        w: 368
+        h: 36
+        color: "#11131A"
+      - type: "rect"
+        x: 8
+        y: 8
+        w: 3
+        h: 36
+        color: "#C084FC"
+        round: false
+      - type: "text"
+        x: 20
+        y: 14
+        text: "&lCRATES"
+        scale: 2
+        color: "#C084FC"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: -18
+        y: 22
+        text: "&7You have &f%oc_total% &7keys"
+        max-width: 180
+        color: "#9CA3AF"
+        align: "right"
+      - type: "rect"
+        x: 8
+        y: 52
+        w: 368
+        h: 56
+        color: "#171B24"
+        border: 1
+        border-color: "#C084FC"
+      - type: "text"
+        x: "center"
+        y: 60
+        text: "&lOPEN CRATES"
+        scale: 3
+        color: "#FFFFFF"
+        shadow-color: "#2E1065"
+      - type: "text"
+        x: "center"
+        y: 91
+        text: "&7Win ranks, tools and rare loot"
+        shadow: false
+      - type: "rect"
+        x: 8
+        y: 116
+        w: 117
+        h: 44
+        color: "#171B24"
+        hover-color: "#232A37"
+        border: 1
+        border-color: "#C084FC"
+        actions:
+          - "player:keys"
+      - type: "text"
+        x: 17
+        y: 128
+        text: "&lMY KEYS"
+        max-width: 103
+        color: "#C084FC"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: 17
+        y: 139
+        text: "&f%oc_totaltext%"
+        max-width: 103
+        color: "#9CA3AF"
+        shadow: false
+      - type: "rect"
+        x: 133
+        y: 116
+        w: 117
+        h: 44
+        color: "#171B24"
+        hover-color: "#232A37"
+        border: 1
+        border-color: "#C084FC"
+        actions:
+          - "player:keys"
+      - type: "text"
+        x: 142
+        y: 128
+        text: "&lKEYALL"
+        max-width: 103
+        color: "#C084FC"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: 142
+        y: 139
+        text: "&7In &f%dreamcore_keyall_time%"
+        max-width: 103
+        color: "#9CA3AF"
+        shadow: false
+      - type: "rect"
+        x: 258
+        y: 116
+        w: 117
+        h: 44
+        color: "#171B24"
+        hover-color: "#232A37"
+        border: 1
+        border-color: "#C084FC"
+        actions:
+          - "player:store"
+      - type: "text"
+        x: 267
+        y: 128
+        text: "&lGET KEYS"
+        max-width: 103
+        color: "#C084FC"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: 267
+        y: 139
+        text: "&7From the store"
+        max-width: 103
+        color: "#9CA3AF"
+        shadow: false
+      - type: "rect"
+        x: 8
+        y: -8
+        w: 368
+        h: 16
+        color: "#11131A"
+      - type: "text"
+        x: "center"
+        y: -12
+        text: "&7/keys  &8|  &7Crates are at spawn"
+        color: "#9CA3AF"

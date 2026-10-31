@@ -1,0 +1,225 @@
+# MARKET - Dreamshopsells, Dreamorders, Dreamauction, Dreamcoinshop
+# Coins/orbs need PlaceholderAPI.
+# Made for a 3x2 screen:  /screen create <name> 3 2 market
+#   or put it on an existing screen:  /screen design <screen> market
+# Background is transparent (shows the wall) - change 'background: none' to a colour like "#11131A".
+# Edit text/colours/actions below, then /screen reload <screen>.
+start: home
+click-sound: ui.button.click
+pages:
+  home:
+    background: "none"
+    refresh: 20
+    elements:
+      - type: "rect"
+        x: 8
+        y: 8
+        w: 368
+        h: 36
+        color: "#11131A"
+      - type: "rect"
+        x: 8
+        y: 8
+        w: 3
+        h: 36
+        color: "#10B981"
+        round: false
+      - type: "text"
+        x: 20
+        y: 14
+        text: "&lMARKET"
+        scale: 2
+        color: "#10B981"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: -18
+        y: 22
+        text: "&7Buy, sell & trade"
+        max-width: 180
+        color: "#9CA3AF"
+        align: "right"
+      - type: "button"
+        x: 8
+        y: 52
+        w: 180
+        h: 34
+        text: "&lSHOP"
+        color: "#047857"
+        scale: 2
+        hover-color: "#059669"
+        shadow-color: "#022C22"
+        actions:
+          - "player:shop"
+      - type: "button"
+        x: 196
+        y: 52
+        w: 180
+        h: 34
+        text: "&lSELL"
+        color: "#B45309"
+        scale: 2
+        hover-color: "#D97706"
+        shadow-color: "#3B2003"
+        actions:
+          - "player:sell"
+      - type: "rect"
+        x: 8
+        y: 96
+        w: 117
+        h: 44
+        color: "#171B24"
+        hover-color: "#232A37"
+        border: 1
+        border-color: "#10B981"
+        actions:
+          - "player:order"
+      - type: "text"
+        x: 17
+        y: 108
+        text: "&lORDERS"
+        max-width: 103
+        color: "#10B981"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: 17
+        y: 119
+        text: "&7Request items"
+        max-width: 103
+        color: "#9CA3AF"
+        shadow: false
+      - type: "rect"
+        x: 133
+        y: 96
+        w: 117
+        h: 44
+        color: "#171B24"
+        hover-color: "#232A37"
+        border: 1
+        border-color: "#10B981"
+        actions:
+          - "player:ah"
+      - type: "text"
+        x: 142
+        y: 108
+        text: "&lAUCTION"
+        max-width: 103
+        color: "#10B981"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: 142
+        y: 119
+        text: "&7Bid & sell"
+        max-width: 103
+        color: "#9CA3AF"
+        shadow: false
+      - type: "rect"
+        x: 258
+        y: 96
+        w: 117
+        h: 44
+        color: "#171B24"
+        hover-color: "#232A37"
+        border: 1
+        border-color: "#10B981"
+        actions:
+          - "player:order mine"
+      - type: "text"
+        x: 267
+        y: 108
+        text: "&lMY ORDERS"
+        max-width: 103
+        color: "#10B981"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: 267
+        y: 119
+        text: "&7What you asked"
+        max-width: 103
+        color: "#9CA3AF"
+        shadow: false
+      - type: "rect"
+        x: 8
+        y: 148
+        w: 117
+        h: 44
+        color: "#171B24"
+        hover-color: "#232A37"
+        border: 1
+        border-color: "#34D399"
+        actions:
+          - "player:coinshop"
+      - type: "text"
+        x: 17
+        y: 160
+        text: "&lCOIN SHOP"
+        max-width: 103
+        color: "#34D399"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: 17
+        y: 171
+        text: "&f%dreamcoinshop_coins% &7coins"
+        max-width: 103
+        color: "#9CA3AF"
+        shadow: false
+      - type: "rect"
+        x: 133
+        y: 148
+        w: 117
+        h: 44
+        color: "#171B24"
+        hover-color: "#232A37"
+        border: 1
+        border-color: "#34D399"
+        actions:
+          - "player:orbshop"
+      - type: "text"
+        x: 142
+        y: 160
+        text: "&lORB SHOP"
+        max-width: 103
+        color: "#34D399"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: 142
+        y: 171
+        text: "&f%dreamcoinshop_orbs% &7orbs"
+        max-width: 103
+        color: "#9CA3AF"
+        shadow: false
+      - type: "rect"
+        x: 258
+        y: 148
+        w: 117
+        h: 44
+        color: "#171B24"
+        hover-color: "#232A37"
+        border: 1
+        border-color: "#34D399"
+        actions:
+          - "player:baltop"
+      - type: "text"
+        x: 267
+        y: 160
+        text: "&lBALTOP"
+        max-width: 103
+        color: "#34D399"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: 267
+        y: 171
+        text: "&7Richest players"
+        max-width: 103
+        color: "#9CA3AF"
+        shadow: false
+      - type: "rect"
+        x: 8
+        y: -8
+        w: 368
+        h: 16
+        color: "#11131A"
+      - type: "text"
+        x: "center"
+        y: -12
+        text: "&7/shop  &8|  &7/sell  &8|  &7/order  &8|  &7/ah  &8|  &7/coinshop"
+        color: "#9CA3AF"

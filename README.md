@@ -14,6 +14,49 @@ Everything is vanilla, with no resource pack and no packet library.
 2. Restart the server. Every command needs `dreamnfm.admin` (op by default).
 
 ## Touchscreens (`/screen`)
+
+### Ready-made designs
+DreamNFM ships with 16 designs made for 3x2 screens. They all use a see-through background with dark cards:
+
+| Design | For |
+|---|---|
+| `welcome` | New players: head, online/ping/uptime, rules, discord, store, settings |
+| `features` | Browse everything: 9 categories, each with its own page of buttons |
+| `stats` | TPS, MSPT, ping, players, TPS/MSPT graphs, uptime |
+| `leaderboard` | Live Dreamleaderboard top 10: podium with heads, 5 tabs |
+| `duels` | Big "1v1 DUELS" card, 2v2, ranked, party, and your stats |
+| `homes` | DreamHomes |
+| `store` | Dreamcore `/store`, `/mediarank` |
+| `market` | Shop, sell, orders, auction, coin and orb shop |
+| `crates` | Dreamcrates keys and keyall timer |
+| `koth` | Dreamkoth countdown, status, rewards |
+| `rtp` | Overworld, nether, end and the 1v1 RTP queue |
+| `land` | Dreamlandclaim and Dreamteams |
+| `vaults` | Dreamvault |
+| `spawners` | Dreamspawner stats and top owners |
+| `bounty` | DreamBounty |
+| `coinflip` | Dreamcoinflip |
+
+Use one of these commands:
+
+```
+/screen create duels 3 2 duels
+/screen design <screen> <design>
+/screen designs
+```
+
+The first makes a new screen with a design. The second puts a design on an existing screen; the old page is kept as `.bak`. The third lists the designs.
+
+The designs live in `plugins/DreamNFM/designs/`. Edit them or add your own. The plugin never overwrites your edits. All previews are in `examples/previews/`.
+
+**Built-in live values:**
+- **Server:** `{tps}`, `{mspt}` and `{uptime}`. On Folia these are for the region you stand in.
+- **Dreamleaderboard tops:** `{lb_<type>_<rank>_name}` and `{lb_<type>_<rank>_value}`. Types are money, playtime, mobs, deaths, placed and broken; ranks go from 1 to 10.
+- **The viewer's own stats:** `{stat_playtime}`, `{stat_kills}`, `{stat_deaths}`, `{stat_mobs}`, `{stat_placed}`, `{stat_broken}`.
+
+MiniMessage colours that come from other plugins' placeholders, like `<#7CFC9B>`, are shown correctly. Long values are trimmed with `max-width`.
+
+### Make your own
 1. Stand in front of a wall and look at the block where the **top-left** corner should go.
 2. Run `/screen create lobby 4 3`. That makes 4 maps wide by 3 tall; the screen grows right and down.
 3. The screen gets a ready-made template: a title, your name, an online-status line, buttons, a progress bar and an info page with your head and an online graph.
@@ -71,14 +114,14 @@ pages:
 
 | Type | What it draws | Extra options |
 |---|---|---|
-| `rect` | A coloured box | `round`, `border`, `border-color` |
-| `text` | One line of text | `scale`, `align`, `shadow` |
+| `rect` | A coloured box | `round`, `border`, `border-color`, `hover-color` |
+| `text` | One line of text | `scale`, `align`, `shadow`, `shadow-color`, `max-width` |
 | `lines` | Several lines of text | `lines: [...]`, `spacing` |
 | `image` | One of your pictures | `file` (`w`/`h` are optional) |
 | `button` | A clickable button | `text`, `icon`, `color`, `hover-color`, `text-color` |
 | `head` | A player's face | `player`, `size` |
 | `progress` | A progress bar | `value`, `max`, `text` with `{percent}` |
-| `graph` | A live graph | `source: online` or `source: tps` |
+| `graph` | A live graph | `source: online`, `tps` or `mspt` |
 
 **Options for any element:**
 - `actions` makes the element clickable.
@@ -108,7 +151,9 @@ pages:
 
 | Command | What it does |
 |---|---|
-| `/screen create <name> <w> <h>` | Makes a new screen |
+| `/screen create <name> <w> <h> [design]` | Makes a new screen |
+| `/screen designs` | Lists the ready-made designs |
+| `/screen design <screen> <design>` | Puts a design on a screen |
 | `/screen delete <name>` | Removes a screen |
 | `/screen list` | Lists all screens |
 | `/screen info <name>` | Shows a screen's details |
@@ -117,6 +162,7 @@ pages:
 | `/screen page <screen> <page\|back\|home> [player]` | Opens a page for a player |
 | `/screen images` | Lists your image files |
 | `/screen set <name> viewrange\|touchrange\|cursor <value>` | Changes a screen setting |
+| `/screen icon <name> <item\|off> [scale] [spin]` | Puts a spinning item above the screen, e.g. `red_bed` |
 | `/screen respawn <name>` | Places a screen's frames again |
 
 Screens of up to about 6x4 are recommended. The limit is 10x10.

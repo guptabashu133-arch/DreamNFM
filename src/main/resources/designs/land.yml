@@ -1,0 +1,216 @@
+# LAND & TEAMS - Dreamlandclaim + Dreamteams
+# Claims, trust and teams.
+# Made for a 3x2 screen:  /screen create <name> 3 2 land
+#   or put it on an existing screen:  /screen design <screen> land
+# Background is transparent (shows the wall) - change 'background: none' to a colour like "#11131A".
+# Edit text/colours/actions below, then /screen reload <screen>.
+start: home
+click-sound: ui.button.click
+pages:
+  home:
+    background: "none"
+    refresh: 20
+    elements:
+      - type: "rect"
+        x: 8
+        y: 8
+        w: 368
+        h: 36
+        color: "#11131A"
+      - type: "rect"
+        x: 8
+        y: 8
+        w: 3
+        h: 36
+        color: "#84CC16"
+        round: false
+      - type: "text"
+        x: 20
+        y: 14
+        text: "&lLAND & TEAMS"
+        scale: 2
+        color: "#84CC16"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: -18
+        y: 22
+        text: "&7Protect what's yours"
+        max-width: 180
+        color: "#9CA3AF"
+        align: "right"
+      - type: "rect"
+        x: 8
+        y: 52
+        w: 117
+        h: 44
+        color: "#171B24"
+        hover-color: "#232A37"
+        border: 1
+        border-color: "#84CC16"
+        actions:
+          - "player:claim"
+      - type: "text"
+        x: 17
+        y: 64
+        text: "&lCLAIM"
+        max-width: 103
+        color: "#84CC16"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: 17
+        y: 75
+        text: "&7Protect land"
+        max-width: 103
+        color: "#9CA3AF"
+        shadow: false
+      - type: "rect"
+        x: 133
+        y: 52
+        w: 117
+        h: 44
+        color: "#171B24"
+        hover-color: "#232A37"
+        border: 1
+        border-color: "#84CC16"
+        actions:
+          - "player:trustlist"
+      - type: "text"
+        x: 142
+        y: 64
+        text: "&lTRUST LIST"
+        max-width: 103
+        color: "#84CC16"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: 142
+        y: 75
+        text: "&7Who can build"
+        max-width: 103
+        color: "#9CA3AF"
+        shadow: false
+      - type: "rect"
+        x: 258
+        y: 52
+        w: 117
+        h: 44
+        color: "#171B24"
+        hover-color: "#232A37"
+        border: 1
+        border-color: "#84CC16"
+        actions:
+          - "player:claimblocks"
+      - type: "text"
+        x: 267
+        y: 64
+        text: "&lCLAIM BLOCKS"
+        max-width: 103
+        color: "#84CC16"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: 267
+        y: 75
+        text: "&7How many left"
+        max-width: 103
+        color: "#9CA3AF"
+        shadow: false
+      - type: "rect"
+        x: 8
+        y: 104
+        w: 117
+        h: 44
+        color: "#171B24"
+        hover-color: "#232A37"
+        border: 1
+        border-color: "#22D3EE"
+        actions:
+          - "player:team"
+      - type: "text"
+        x: 17
+        y: 116
+        text: "&lMY TEAM"
+        max-width: 103
+        color: "#22D3EE"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: 17
+        y: 127
+        text: "&7Team menu"
+        max-width: 103
+        color: "#9CA3AF"
+        shadow: false
+      - type: "rect"
+        x: 133
+        y: 104
+        w: 117
+        h: 44
+        color: "#171B24"
+        hover-color: "#232A37"
+        border: 1
+        border-color: "#22D3EE"
+        actions:
+          - "player:unclaim"
+      - type: "text"
+        x: 142
+        y: 116
+        text: "&lUNCLAIM"
+        max-width: 103
+        color: "#22D3EE"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: 142
+        y: 127
+        text: "&7Free this claim"
+        max-width: 103
+        color: "#9CA3AF"
+        shadow: false
+      - type: "rect"
+        x: 258
+        y: 104
+        w: 117
+        h: 44
+        color: "#171B24"
+        hover-color: "#232A37"
+        border: 1
+        border-color: "#84CC16"
+        actions:
+          - "player:dlc help"
+      - type: "text"
+        x: 267
+        y: 116
+        text: "&lHELP"
+        max-width: 103
+        color: "#84CC16"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: 267
+        y: 127
+        text: "&7All commands"
+        max-width: 103
+        color: "#9CA3AF"
+        shadow: false
+      - type: "rect"
+        x: 8
+        y: 160
+        w: 368
+        h: 36
+        color: "#171B24"
+      - type: "text"
+        x: "center"
+        y: 166
+        text: "&fTrust friends: &e/trust <player>"
+      - type: "text"
+        x: "center"
+        y: 179
+        text: "&7Chests only: &f/containertrust <player>"
+        shadow: false
+      - type: "rect"
+        x: 8
+        y: -8
+        w: 368
+        h: 16
+        color: "#11131A"
+      - type: "text"
+        x: "center"
+        y: -12
+        text: "&7Dreamlandclaim  &8|  &7Dreamteams"
+        color: "#9CA3AF"

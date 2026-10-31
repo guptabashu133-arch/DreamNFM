@@ -1,0 +1,193 @@
+# WELCOME - first thing new players see
+# Uses Dreamcore's /rules /discord /store /settings.
+# Made for a 3x2 screen:  /screen create <name> 3 2 welcome
+#   or put it on an existing screen:  /screen design <screen> welcome
+# Background is transparent (shows the wall) - change 'background: none' to a colour like "#11131A".
+# Edit text/colours/actions below, then /screen reload <screen>.
+start: home
+click-sound: ui.button.click
+pages:
+  home:
+    background: "none"
+    refresh: 20
+    elements:
+      - type: "rect"
+        x: 8
+        y: 8
+        w: 368
+        h: 36
+        color: "#11131A"
+      - type: "rect"
+        x: 8
+        y: 8
+        w: 3
+        h: 36
+        color: "#A78BFA"
+        round: false
+      - type: "text"
+        x: 20
+        y: 14
+        text: "&lWELCOME"
+        scale: 2
+        color: "#A78BFA"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: -18
+        y: 22
+        text: "&7{date}"
+        max-width: 180
+        color: "#9CA3AF"
+        align: "right"
+      - type: "rect"
+        x: 8
+        y: 52
+        w: 368
+        h: 58
+        color: "#171B24"
+        border: 1
+        border-color: "#2A3140"
+      - type: "head"
+        player: "{player}"
+        x: 18
+        y: 59
+        size: 44
+      - type: "text"
+        x: 72
+        y: 60
+        text: "&lHey {player}!"
+        scale: 2
+        color: "#FFFFFF"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: 72
+        y: 82
+        text: "&7Online &f{online}&7/&f{max}  &8|  &7Ping &f{ping}ms  &8|  &7Up &f{uptime}"
+        shadow: false
+      - type: "text"
+        x: 72
+        y: 95
+        text: "&7Glad you're here - have fun!"
+        shadow: false
+      - type: "rect"
+        x: 8
+        y: 118
+        w: 86
+        h: 44
+        color: "#171B24"
+        hover-color: "#232A37"
+        border: 1
+        border-color: "#A78BFA"
+        actions:
+          - "player:rules"
+      - type: "text"
+        x: 17
+        y: 130
+        text: "&lRULES"
+        max-width: 72
+        color: "#A78BFA"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: 17
+        y: 141
+        text: "&7Read first"
+        max-width: 72
+        color: "#9CA3AF"
+        shadow: false
+      - type: "rect"
+        x: 102
+        y: 118
+        w: 86
+        h: 44
+        color: "#171B24"
+        hover-color: "#232A37"
+        border: 1
+        border-color: "#A78BFA"
+        actions:
+          - "player:discord"
+      - type: "text"
+        x: 111
+        y: 130
+        text: "&lDISCORD"
+        max-width: 72
+        color: "#A78BFA"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: 111
+        y: 141
+        text: "&7Join us"
+        max-width: 72
+        color: "#9CA3AF"
+        shadow: false
+      - type: "rect"
+        x: 196
+        y: 118
+        w: 86
+        h: 44
+        color: "#171B24"
+        hover-color: "#232A37"
+        border: 1
+        border-color: "#A78BFA"
+        actions:
+          - "player:store"
+      - type: "text"
+        x: 205
+        y: 130
+        text: "&lSTORE"
+        max-width: 72
+        color: "#A78BFA"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: 205
+        y: 141
+        text: "&7Support us"
+        max-width: 72
+        color: "#9CA3AF"
+        shadow: false
+      - type: "rect"
+        x: 290
+        y: 118
+        w: 86
+        h: 44
+        color: "#171B24"
+        hover-color: "#232A37"
+        border: 1
+        border-color: "#A78BFA"
+        actions:
+          - "player:settings"
+      - type: "text"
+        x: 299
+        y: 130
+        text: "&lSETTINGS"
+        max-width: 72
+        color: "#A78BFA"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: 299
+        y: 141
+        text: "&7Your options"
+        max-width: 72
+        color: "#9CA3AF"
+        shadow: false
+      # Change player:rtp to whatever new players should do first (warp, spawn, ...)
+      - type: "button"
+        x: 8
+        y: 170
+        w: 368
+        h: 26
+        text: "&lSTART PLAYING"
+        color: "#6D28D9"
+        hover-color: "#7C3AED"
+        shadow-color: "#1E0B3B"
+        actions:
+          - "player:rtp"
+      - type: "rect"
+        x: 8
+        y: -8
+        w: 368
+        h: 16
+        color: "#11131A"
+      - type: "text"
+        x: "center"
+        y: -12
+        text: "&7Type &f/rules &7- &f/discord &7- &f/store &7anytime"
+        color: "#9CA3AF"

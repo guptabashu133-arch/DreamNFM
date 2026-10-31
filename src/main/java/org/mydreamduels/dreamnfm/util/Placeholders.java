@@ -67,6 +67,12 @@ public final class Placeholders {
                     .replace("{max}", String.valueOf(Bukkit.getMaxPlayers()))
                     .replace("{time}", LocalDateTime.now().format(TIME))
                     .replace("{date}", LocalDateTime.now().format(DATE));
+            if (t.contains("{tps}") || t.contains("{mspt}")) {
+                double[] st = ServerStats.now();
+                t = t.replace("{tps}", ServerStats.format(st[0])).replace("{mspt}", ServerStats.format(st[1]));
+            }
+            if (t.contains("{uptime}")) t = t.replace("{uptime}", ServerStats.uptime());
+            if (t.contains("{lb_") || t.contains("{stat_")) t = LeaderboardHook.apply(player, t);
             if (player != null) {
                 t = t.replace("{player}", player.getName())
                         .replace("{world}", player.getWorld().getName())

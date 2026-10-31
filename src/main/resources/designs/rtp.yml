@@ -1,0 +1,153 @@
+# RANDOM TP - Dreamrtp + Dreamrtpqueue
+# Three dimensions plus the 1v1 RTP queue.
+# Made for a 3x2 screen:  /screen create <name> 3 2 rtp
+#   or put it on an existing screen:  /screen design <screen> rtp
+# Background is transparent (shows the wall) - change 'background: none' to a colour like "#11131A".
+# Edit text/colours/actions below, then /screen reload <screen>.
+start: home
+click-sound: ui.button.click
+pages:
+  home:
+    background: "none"
+    refresh: 20
+    elements:
+      - type: "rect"
+        x: 8
+        y: 8
+        w: 368
+        h: 36
+        color: "#11131A"
+      - type: "rect"
+        x: 8
+        y: 8
+        w: 3
+        h: 36
+        color: "#38BDF8"
+        round: false
+      - type: "text"
+        x: 20
+        y: 14
+        text: "&lRANDOM TP"
+        scale: 2
+        color: "#38BDF8"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: -18
+        y: 22
+        text: "&7Explore the wild"
+        max-width: 180
+        color: "#9CA3AF"
+        align: "right"
+      - type: "rect"
+        x: 8
+        y: 52
+        w: 117
+        h: 60
+        color: "#171B24"
+        hover-color: "#232A37"
+        border: 1
+        border-color: "#22C55E"
+        actions:
+          - "player:rtp overworld"
+      - type: "text"
+        x: 17
+        y: 72
+        text: "&lOVERWORLD"
+        max-width: 103
+        color: "#22C55E"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: 17
+        y: 83
+        text: "&7Classic survival"
+        max-width: 103
+        color: "#9CA3AF"
+        shadow: false
+      - type: "rect"
+        x: 133
+        y: 52
+        w: 117
+        h: 60
+        color: "#171B24"
+        hover-color: "#232A37"
+        border: 1
+        border-color: "#EF4444"
+        actions:
+          - "player:rtp nether"
+      - type: "text"
+        x: 142
+        y: 72
+        text: "&lNETHER"
+        max-width: 103
+        color: "#EF4444"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: 142
+        y: 83
+        text: "&7Hot & dangerous"
+        max-width: 103
+        color: "#9CA3AF"
+        shadow: false
+      - type: "rect"
+        x: 258
+        y: 52
+        w: 117
+        h: 60
+        color: "#171B24"
+        hover-color: "#232A37"
+        border: 1
+        border-color: "#A78BFA"
+        actions:
+          - "player:rtp end"
+      - type: "text"
+        x: 267
+        y: 72
+        text: "&lTHE END"
+        max-width: 103
+        color: "#A78BFA"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: 267
+        y: 83
+        text: "&7Void & shulkers"
+        max-width: 103
+        color: "#9CA3AF"
+        shadow: false
+      - type: "button"
+        x: 8
+        y: 120
+        w: 368
+        h: 32
+        text: "&lRTP 1v1 QUEUE"
+        color: "#0369A1"
+        scale: 2
+        hover-color: "#0284C7"
+        shadow-color: "#082F49"
+        actions:
+          - "player:rtpqueue"
+      - type: "rect"
+        x: 8
+        y: 160
+        w: 368
+        h: 36
+        color: "#171B24"
+      - type: "text"
+        x: "center"
+        y: 166
+        text: "&fGet matched and dropped into the wild together"
+      - type: "text"
+        x: "center"
+        y: 179
+        text: "&7/rtpq status  &8|  &7/rtpq cancel"
+        shadow: false
+      - type: "rect"
+        x: 8
+        y: -8
+        w: 368
+        h: 16
+        color: "#11131A"
+      - type: "text"
+        x: "center"
+        y: -12
+        text: "&7/rtp  &8|  &7/rtpq"
+        color: "#9CA3AF"

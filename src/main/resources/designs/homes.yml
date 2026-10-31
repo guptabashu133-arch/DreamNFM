@@ -1,0 +1,206 @@
+# HOMES - DreamHomes
+# Opens /home; explains /sethome and /delhome.
+# Made for a 3x2 screen:  /screen create <name> 3 2 homes
+#   or put it on an existing screen:  /screen design <screen> homes
+# Background is transparent (shows the wall) - change 'background: none' to a colour like "#11131A".
+# Edit text/colours/actions below, then /screen reload <screen>.
+start: home
+click-sound: ui.button.click
+pages:
+  home:
+    background: "none"
+    refresh: 20
+    elements:
+      - type: "rect"
+        x: 8
+        y: 8
+        w: 368
+        h: 36
+        color: "#11131A"
+      - type: "rect"
+        x: 8
+        y: 8
+        w: 3
+        h: 36
+        color: "#F59E0B"
+        round: false
+      - type: "text"
+        x: 20
+        y: 14
+        text: "&lHOMES"
+        scale: 2
+        color: "#F59E0B"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: -18
+        y: 22
+        text: "&7Welcome back, {player}"
+        max-width: 180
+        color: "#9CA3AF"
+        align: "right"
+      - type: "button"
+        x: 8
+        y: 54
+        w: 368
+        h: 40
+        text: "&lOPEN MY HOMES"
+        color: "#B45309"
+        scale: 2
+        hover-color: "#D97706"
+        shadow-color: "#3B2003"
+        actions:
+          - "player:home"
+      - type: "rect"
+        x: 8
+        y: 104
+        w: 117
+        h: 44
+        color: "#171B24"
+        hover-color: "#232A37"
+        border: 1
+        border-color: "#F59E0B"
+        actions:
+          - "message:&6Homes &8> &fStand where you want it and type &e/sethome <name>"
+      - type: "text"
+        x: 17
+        y: 116
+        text: "&lSET HOME"
+        max-width: 103
+        color: "#F59E0B"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: 17
+        y: 127
+        text: "&7/sethome <name>"
+        max-width: 103
+        color: "#9CA3AF"
+        shadow: false
+      - type: "rect"
+        x: 133
+        y: 104
+        w: 117
+        h: 44
+        color: "#171B24"
+        hover-color: "#232A37"
+        border: 1
+        border-color: "#F59E0B"
+        actions:
+          - "message:&6Homes &8> &fType &e/delhome <name> &fto remove a home"
+      - type: "text"
+        x: 142
+        y: 116
+        text: "&lDELETE"
+        max-width: 103
+        color: "#F59E0B"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: 142
+        y: 127
+        text: "&7/delhome <name>"
+        max-width: 103
+        color: "#9CA3AF"
+        shadow: false
+      - type: "rect"
+        x: 258
+        y: 104
+        w: 117
+        h: 44
+        color: "#171B24"
+        hover-color: "#232A37"
+        border: 1
+        border-color: "#F59E0B"
+        actions:
+          - "page:help"
+      - type: "text"
+        x: 267
+        y: 116
+        text: "&lHOW IT WORKS"
+        max-width: 103
+        color: "#F59E0B"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: 267
+        y: 127
+        text: "&7Quick guide"
+        max-width: 103
+        color: "#9CA3AF"
+        shadow: false
+      - type: "rect"
+        x: 8
+        y: -8
+        w: 368
+        h: 16
+        color: "#11131A"
+      - type: "text"
+        x: "center"
+        y: -12
+        text: "&7/home  &8|  &7/sethome <name>  &8|  &7/delhome <name>"
+        color: "#9CA3AF"
+  help:
+    background: "none"
+    refresh: 0
+    elements:
+      - type: "rect"
+        x: 8
+        y: 8
+        w: 368
+        h: 36
+        color: "#11131A"
+      - type: "rect"
+        x: 8
+        y: 8
+        w: 3
+        h: 36
+        color: "#F59E0B"
+        round: false
+      - type: "text"
+        x: 20
+        y: 14
+        text: "&lHOW HOMES WORK"
+        scale: 2
+        color: "#F59E0B"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: -18
+        y: 22
+        text: "&7DreamHomes"
+        max-width: 180
+        color: "#9CA3AF"
+        align: "right"
+      - type: "rect"
+        x: 8
+        y: 52
+        w: 368
+        h: 132
+        color: "#171B24"
+      - type: "lines"
+        x: 20
+        y: 62
+        align: "left"
+        spacing: 6
+        lines:
+          - "&61. &fGo to the place you want to save"
+          - "&62. &fType &e/sethome <name>"
+          - "&63. &fClick &6OPEN MY HOMES &for type &e/home"
+          - "&64. &fPick a home - you get teleported"
+          - "&65. &e/delhome <name> &fremoves one"
+      - type: "button"
+        x: 8
+        y: -8
+        w: 80
+        h: 18
+        text: "< Back"
+        color: "#3A2A12"
+        hover-color: "#56401B"
+        actions:
+          - "page:back"
+      - type: "button"
+        x: -8
+        y: -8
+        w: 110
+        h: 18
+        text: "&lOpen homes"
+        color: "#B45309"
+        hover-color: "#D97706"
+        actions:
+          - "player:home"

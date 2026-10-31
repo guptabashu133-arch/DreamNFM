@@ -1,0 +1,155 @@
+# STORE - Dreamcore /store and /mediarank
+# Change the footer to your store link.
+# Made for a 3x2 screen:  /screen create <name> 3 2 store
+#   or put it on an existing screen:  /screen design <screen> store
+# Background is transparent (shows the wall) - change 'background: none' to a colour like "#11131A".
+# Edit text/colours/actions below, then /screen reload <screen>.
+start: home
+click-sound: ui.button.click
+pages:
+  home:
+    background: "none"
+    refresh: 20
+    elements:
+      - type: "rect"
+        x: 8
+        y: 8
+        w: 368
+        h: 36
+        color: "#11131A"
+      - type: "rect"
+        x: 8
+        y: 8
+        w: 3
+        h: 36
+        color: "#F27FA5"
+        round: false
+      - type: "text"
+        x: 20
+        y: 14
+        text: "&lSTORE"
+        scale: 2
+        color: "#F27FA5"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: -18
+        y: 22
+        text: "&7Support the server"
+        max-width: 180
+        color: "#9CA3AF"
+        align: "right"
+      - type: "button"
+        x: 8
+        y: 54
+        w: 368
+        h: 40
+        text: "&lVISIT OUR STORE"
+        color: "#AA5974"
+        scale: 2
+        hover-color: "#D06D8E"
+        shadow-color: "#3D0820"
+        actions:
+          - "player:store"
+      - type: "rect"
+        x: 8
+        y: 104
+        w: 117
+        h: 44
+        color: "#171B24"
+        hover-color: "#232A37"
+        border: 1
+        border-color: "#F27FA5"
+        actions:
+          - "player:store"
+      - type: "text"
+        x: 17
+        y: 116
+        text: "&lRANKS"
+        max-width: 103
+        color: "#F27FA5"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: 17
+        y: 127
+        text: "&7Perks & kits"
+        max-width: 103
+        color: "#9CA3AF"
+        shadow: false
+      - type: "rect"
+        x: 133
+        y: 104
+        w: 117
+        h: 44
+        color: "#171B24"
+        hover-color: "#232A37"
+        border: 1
+        border-color: "#F27FA5"
+        actions:
+          - "player:store"
+      - type: "text"
+        x: 142
+        y: 116
+        text: "&lCRATE KEYS"
+        max-width: 103
+        color: "#F27FA5"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: 142
+        y: 127
+        text: "&7Open more crates"
+        max-width: 103
+        color: "#9CA3AF"
+        shadow: false
+      - type: "rect"
+        x: 258
+        y: 104
+        w: 117
+        h: 44
+        color: "#171B24"
+        hover-color: "#232A37"
+        border: 1
+        border-color: "#F27FA5"
+        actions:
+          - "player:mediarank"
+      - type: "text"
+        x: 267
+        y: 116
+        text: "&lMEDIA RANK"
+        max-width: 103
+        color: "#F27FA5"
+        shadow-color: "#05060A"
+      - type: "text"
+        x: 267
+        y: 127
+        text: "&7For creators"
+        max-width: 103
+        color: "#9CA3AF"
+        shadow: false
+      - type: "rect"
+        x: 8
+        y: 156
+        w: 368
+        h: 42
+        color: "#171B24"
+        border: 1
+        border-color: "#2A3140"
+      - type: "text"
+        x: "center"
+        y: 163
+        text: "&fEvery purchase keeps the server online"
+      - type: "text"
+        x: "center"
+        y: 177
+        text: "&7Thank you for the support, &f{player}&7!"
+        shadow: false
+      - type: "rect"
+        x: 8
+        y: -8
+        w: 368
+        h: 16
+        color: "#11131A"
+      - type: "text"
+        x: "center"
+        y: -12
+        text: "&7store.yourserver.net  &8(edit me)"
+        color: "#9CA3AF"

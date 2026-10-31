@@ -72,6 +72,10 @@ public final class Screen implements Viewable {
     private final Geometry geo;
     private volatile double viewRange = 48, touchRange = 8;
     private volatile boolean cursor = true;
+    private volatile Material icon;
+    private volatile float iconScale = 1.2f;
+    private volatile double iconSpin = 90;
+    private volatile org.mydreamduels.dreamnfm.hologram.Hologram iconHolo;
     private final int[] mapIds;
 
     private volatile MapView[] views;
@@ -148,6 +152,45 @@ public final class Screen implements Viewable {
     public void setCursor(boolean on) {
         this.cursor = on;
         redraw();
+    }
+
+    public Material icon() {
+        return icon;
+    }
+
+    public float iconScale() {
+        return iconScale;
+    }
+
+    public double iconSpin() {
+        return iconSpin;
+    }
+
+    /** Spinning item above the top-centre of the screen (null = none). */
+    public void setIcon(Material item, float scale, double spin) {
+        this.icon = item;
+        this.iconScale = Math.max(0.1f, Math.min(8f, scale));
+        this.iconSpin = spin;
+        rebuildIcon();
+    }
+
+    void rebuildIcon() {
+        org.mydreamduels.dreamnfm.hologram.Hologram old = iconHolo;
+        iconHolo = null;
+        if (old != null) plugin.holograms().remove(old.name());
+        Material m = icon;
+        if (m == null || destroyed || !m.isItem()) return;
+        org.mydreamduels.dreamnfm.hologram.Hologram h = new org.mydreamduels.dreamnfm.hologram.Hologram(plugin, "screen:" + name + ":icon", true);
+        double top = geo.y() + 1.0;
+        h.setPosition(world, x(), top + 0.25 + iconScale * 0.5, z(), 0f);
+        h.setType(org.mydreamduels.dreamnfm.hologram.Hologram.Type.ITEM);
+        h.setItem(new ItemStack(m));
+        h.setScale(iconScale, iconScale, iconScale);
+        h.setSpin(iconSpin);
+        h.setBob(0.08);
+        h.setViewRange(viewRange);
+        iconHolo = h;
+        plugin.holograms().add(h);
     }
 
     public File pagesFile() {
@@ -315,6 +358,9 @@ public final class Screen implements Viewable {
     public void destroy() {
         destroyed = true;
         ready = false;
+        org.mydreamduels.dreamnfm.hologram.Hologram ih = iconHolo;
+        iconHolo = null;
+        if (ih != null) plugin.holograms().remove(ih.name());
         respawnFrames();
         states.clear();
         MapView[] v = views;
@@ -644,6 +690,9 @@ public final class Screen implements Viewable {
         s.set("view-range", viewRange);
         s.set("touch-range", touchRange);
         s.set("cursor", cursor);
+        s.set("icon", icon == null ? null : icon.name());
+        s.set("icon-scale", (double) iconScale);
+        s.set("icon-spin", iconSpin);
         List<Integer> ids = new ArrayList<>();
         for (int id : mapIds()) ids.add(id);
         s.set("maps", ids);
@@ -667,6 +716,10 @@ public final class Screen implements Viewable {
         sc.setViewRange(s.getDouble("view-range", 48));
         sc.setTouchRange(s.getDouble("touch-range", 8));
         sc.cursor = s.getBoolean("cursor", true);
+        String ic = s.getString("icon");
+        sc.icon = ic == null ? null : Material.matchMaterial(ic);
+        sc.iconScale = (float) s.getDouble("icon-scale", 1.2);
+        sc.iconSpin = s.getDouble("icon-spin", 90);
         return sc;
     }
 }

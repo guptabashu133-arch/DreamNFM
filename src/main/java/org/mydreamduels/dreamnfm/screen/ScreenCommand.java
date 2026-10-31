@@ -20,7 +20,7 @@ import java.util.Locale;
 /** /screen - map touchscreens. Pages live in plugins/DreamNFM/screens/<name>.yml. */
 public final class ScreenCommand extends Cmd {
 
-    private static final List<String> SUBS = List.of("create", "delete", "list", "info", "tp", "reload", "page", "images", "set", "respawn");
+    private static final List<String> SUBS = List.of("create", "delete", "list", "info", "tp", "reload", "page", "images", "set", "icon", "design", "designs", "respawn");
 
     public ScreenCommand(DreamNFM plugin) {
         super(plugin, "dreamnfm.screen");
@@ -119,6 +119,40 @@ public final class ScreenCommand extends Cmd {
                 plugin.screens().save();
                 Text.ok(s, "&f" + sc.name() + "&7: " + a[2].toLowerCase(Locale.ROOT) + " = &f" + a[3]);
             }
+            case "icon" -> {
+                need(a, 3, "/screen icon <name> <item|off> [scale] [spin deg/s]");
+                Screen sc = screen(a[1]);
+                if (a[2].equalsIgnoreCase("off") || a[2].equalsIgnoreCase("none")) {
+                    sc.setIcon(null, sc.iconScale(), sc.iconSpin());
+                    plugin.screens().save();
+                    Text.ok(s, "Icon above &f" + sc.name() + "&7 removed.");
+                    return;
+                }
+                org.bukkit.Material m = org.bukkit.Material.matchMaterial(a[2]);
+                if (m == null || !m.isItem() || m.isAir()) throw new Fail("Unknown item '" + a[2] + "'. Example: red_bed");
+                float scale = a.length > 3 ? (float) num(a[3], "Scale") : sc.iconScale();
+                double spin = a.length > 4 ? num(a[4], "Spin") : sc.iconSpin();
+                sc.setIcon(m, scale, spin);
+                plugin.screens().save();
+                Text.ok(s, "&f" + m.name().toLowerCase(Locale.ROOT) + "&7 now spins above &f" + sc.name() + "&7 (scale " + scale + ", " + spin + " deg/s)");
+            }
+            case "design", "template" -> {
+                need(a, 3, "/screen design <screen> <design>   (/screen designs = list)");
+                Screen sc = screen(a[1]);
+                if (plugin.screens().designs().file(a[2]) == null)
+                    throw new Fail("No design '" + a[2] + "'. Designs: " + String.join(", ", plugin.screens().designs().names()));
+                try {
+                    plugin.screens().designs().apply(sc, a[2]);
+                } catch (java.io.IOException e) {
+                    throw new Fail("Could not apply it: " + e.getMessage());
+                }
+                Text.ok(s, "Design &f" + a[2] + "&7 is now on &f" + sc.name() + "&7. Old page saved as &fscreens/" + sc.name() + ".yml.bak");
+            }
+            case "designs", "templates" -> {
+                List<String> names = plugin.screens().designs().names();
+                Text.send(s, names.isEmpty() ? "No designs in plugins/DreamNFM/designs" : "&fDesigns (" + names.size() + "): &7" + String.join("&8, &7", names));
+                Text.raw(s, "&7 Use: &f/screen design <screen> <design> &7or &f/screen create <name> <w> <h> <design>");
+            }
             case "respawn" -> {
                 need(a, 2, "/screen respawn <name>");
                 screen(a[1]).respawnFrames();
@@ -129,7 +163,7 @@ public final class ScreenCommand extends Cmd {
     }
 
     private void create(CommandSender s, String[] a) {
-        need(a, 4, "/screen create <name> <width> <height>  (look at the block for the TOP-LEFT corner)");
+        need(a, 4, "/screen create <name> <width> <height> [design]  (look at the block for the TOP-LEFT corner)");
         Player p = player(s);
         String name = a[1];
         if (!name.matches("[A-Za-z0-9_\\-]{1,32}")) throw new Fail("Names may use letters, numbers, _ and -.");
@@ -154,15 +188,20 @@ public final class ScreenCommand extends Cmd {
         }
         Screen other = plugin.screens().overlapping(world.getName(), g);
         if (other != null) throw new Fail("That overlaps screen '" + other.name() + "'.");
-        Screen sc = plugin.screens().create(name, world.getName(), g);
+        String design = a.length > 4 ? a[4] : null;
+        if (design != null && plugin.screens().designs().file(design) == null)
+            throw new Fail("No design '" + design + "'. Designs: " + String.join(", ", plugin.screens().designs().names()));
+        Screen sc = plugin.screens().create(name, world.getName(), g, design);
         Text.ok(s, "Screen &f" + sc.name() + "&7 created (" + w + "x" + h + "). Edit &fscreens/" + sc.name() + ".yml&7, then &f/screen reload " + sc.name());
     }
 
     private void help(CommandSender s) {
         Text.raw(s, "&#7AA2FF&l/screen &7- map touchscreens");
-        Text.raw(s, "&f create <name> <w> <h> &8- &7look at the wall block for the top-left corner");
+        Text.raw(s, "&f create <name> <w> <h> [design] &8- &7look at the wall block for the top-left corner");
+        Text.raw(s, "&f designs &8| &fdesign <screen> <design> &8- &7ready-made pages (homes, duels, stats...)");
         Text.raw(s, "&f delete &8| &flist &8| &finfo &8| &ftp &8| &freload [name] &8| &fimages &8| &frespawn <name>");
         Text.raw(s, "&f page <screen> <page|back|home> [player] &8| &fset <name> viewrange|touchrange|cursor <value>");
+        Text.raw(s, "&f icon <name> <item|off> [scale] [spin] &8- &7spinning item above the screen");
         Text.raw(s, "&7Pages: &fplugins/DreamNFM/screens/<name>.yml &7Images: &fplugins/DreamNFM/images/");
     }
 
@@ -174,10 +213,16 @@ public final class ScreenCommand extends Cmd {
             return out;
         }
         String sub = a[0].toLowerCase(Locale.ROOT);
-        if (a.length == 2) return sub.equals("create") || sub.equals("list") || sub.equals("images") ? List.of() : plugin.screens().names();
+        if (a.length == 2) return sub.equals("create") || sub.equals("list") || sub.equals("images") || sub.equals("designs") ? List.of() : plugin.screens().names();
         if (a.length == 3) {
             if (sub.equals("create")) return List.of("1", "2", "3", "4", "5");
             if (sub.equals("set")) return List.of("viewrange", "touchrange", "cursor");
+            if (sub.equals("design") || sub.equals("template")) return plugin.screens().designs().names();
+            if (sub.equals("icon")) {
+                List<String> out = new ArrayList<>(List.of("off", "red_bed", "compass", "diamond_sword", "ender_pearl", "nether_star"));
+                for (org.bukkit.Material m : org.bukkit.Material.values()) if (m.isItem() && !m.isLegacy() && out.size() < 300) out.add(m.name().toLowerCase(Locale.ROOT));
+                return out;
+            }
             if (sub.equals("page")) {
                 Screen sc = plugin.screens().get(a[1]);
                 List<String> out = new ArrayList<>(sc == null ? List.of() : sc.pages().names());
@@ -188,6 +233,10 @@ public final class ScreenCommand extends Cmd {
         }
         if (a.length == 4) {
             if (sub.equals("create")) return List.of("1", "2", "3", "4");
+            if (sub.equals("icon")) return List.of("0.8", "1.2", "1.6", "2");
+        }
+        if (a.length == 5) {
+            if (sub.equals("create")) return plugin.screens().designs().names();
             if (sub.equals("page")) return Bukkit.getOnlinePlayers().stream().map(Player::getName).toList();
             if (sub.equals("set")) return a[2].equalsIgnoreCase("cursor") ? List.of("true", "false") : List.of("8", "16", "48");
         }
