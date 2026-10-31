@@ -1,0 +1,15 @@
+# DreamNFM - holograms, NPCs and map touchscreens (Paper + Folia)
+prefix: "&#7AA2FF&lNFM &8» &7"
+
+performance:
+  # How often (ticks) each player's nearby holograms/NPCs/screens are checked.
+  # Lower = things appear a little sooner, higher = less work. 2-10.
+  tracker-ticks: 5
+
+screens:
+  # How often (ticks) the cursor/hover is updated while a player stands near a screen.
+  cursor-ticks: 2
+  # Smooth colour gradients in images (Floyd-Steinberg). false = flat colours.
+  dither: true
+  # Online/TPS graph: one sample every N seconds (60 samples are kept).
+  graph-interval-seconds: 30
