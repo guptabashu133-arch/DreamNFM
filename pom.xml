@@ -4,14 +4,26 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <!--
+      DreamScreens is built in three parts so ONE jar runs everywhere:
+        core - everything except NPCs. Java 17 + the 1.20.4 API, so it loads on
+               Spigot / Paper / Purpur / Folia from 1.20.4 up to the newest versions.
+        npc  - NPCs on the vanilla Mannequin entity (needs 1.21.9+, Java 21).
+               Only loaded when the server actually has Mannequins.
+        dist - glues both into target/DreamScreens.jar (dist/target).
+    -->
     <groupId>org.mydreamduels</groupId>
-    <artifactId>DreamNFM</artifactId>
-    <version>1.0.0</version>
-    <packaging>jar</packaging>
+    <artifactId>dreamscreens-parent</artifactId>
+    <version>1.1.0</version>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>core</module>
+        <module>npc</module>
+        <module>dist</module>
+    </modules>
 
     <properties>
-        <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -22,38 +34,20 @@
         </repository>
     </repositories>
 
-    <dependencies>
-        <!-- Compiled against paper-api (a superset of the Bukkit API), but runs on
-             Paper, Folia AND plain Spigot - see platform/PlatformSupport. -->
-        <dependency>
-            <groupId>io.papermc.paper</groupId>
-            <artifactId>paper-api</artifactId>
-            <version>1.21.11-R0.1-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
-    </dependencies>
-
     <build>
-        <finalName>${project.artifactId}</finalName>
-        <resources>
-            <!-- filtered so plugin.yml's version always matches this pom -->
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>true</filtering>
-            </resource>
-        </resources>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.13.0</version>
-                <configuration>
-                    <compilerArgs>
-                        <arg>-Xlint:deprecation</arg>
-                    </compilerArgs>
-                </configuration>
-            </plugin>
-        </plugins>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.13.0</version>
+                    <configuration>
+                        <compilerArgs>
+                            <arg>-Xlint:deprecation</arg>
+                        </compilerArgs>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
     </build>
 </project>
-

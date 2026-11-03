@@ -1,0 +1,44 @@
+name: DreamScreens
+version: '${project.version}'
+main: org.mydreamduels.dreamscreens.DreamScreens
+api-version: '1.20'
+author: javacoder99
+description: Clickable map touchscreens with an in-game editor, holograms and NPCs - Spigot, Paper, Purpur and Folia.
+website: https://github.com/guptabashu133-arch
+folia-supported: true
+softdepend: [PlaceholderAPI, Dreamleaderboard]
+
+commands:
+  dreamscreens:
+    description: DreamScreens overview, reload and version
+    aliases: [dscreens, dreamnfm, nfm]
+  screen:
+    description: Create and manage touchscreens
+    aliases: [screens, touchscreen, dsc]
+  screenedit:
+    description: Edit a touchscreen in game (click an element, then change it)
+    aliases: [se, sedit]
+  holo:
+    description: Create and edit holograms
+    aliases: [hologram, holograms, dh]
+  npc:
+    description: Create and edit NPCs (Minecraft 1.21.9+)
+    aliases: [npcs, dnpc]
+
+permissions:
+  dreamscreens.admin:
+    description: Everything in DreamScreens
+    default: op
+    children:
+      dreamscreens.screen: true
+      dreamscreens.hologram: true
+      dreamscreens.npc: true
+  dreamscreens.screen:
+    description: /screen and /se
+    default: op
+  dreamscreens.hologram:
+    description: /holo
+    default: op
+  dreamscreens.npc:
+    description: /npc
+    default: op

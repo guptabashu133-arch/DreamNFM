@@ -1,22 +1,128 @@
-# DreamNFM
+# DreamScreens
 
-Holograms, NPCs and clickable map touchscreens for **Paper and Folia** (1.21.9+ / 26.x).
-Everything is vanilla, with no resource pack and no packet library.
+Clickable **map touchscreens** you build and edit **in game**, with 16 ready-made designs. Holograms and NPCs come included.
 
-| Module | What it is |
+- **Platforms:** Spigot, Paper, Purpur and Folia
+- **Versions:** 1.20.4 up to 26.x. NPCs need Paper 1.21.9+
+- **Requirements:** nothing else needed. PlaceholderAPI is optional
+
+![All designs](examples/previews/all-designs.png)
+
+## Quick start (2 minutes)
+
+**1. Make a screen with a ready design.** Look at the wall block that should be the top-left corner, then run:
+```
+/screen create lobby 3 2 welcome
+```
+
+**2. Change it in game:**
+```
+/se lobby
+```
+Click anything on the screen to select it, then change it:
+```
+/se text &lHello!
+/se color gold
+/se move center 20
+```
+
+**3. Finish:**
+```
+/se done
+```
+
+## The in-game editor (`/se`)
+
+Start with `/se` while looking at a screen, or `/se <screen>`. Stop with `/se done`.
+
+While you edit:
+- Clicking a thing on the screen selects it (yellow outline + number). Clicking the same spot again selects the thing underneath.
+- Your action bar shows the exact x/y you're pointing at.
+- Clicks select things instead of running buttons. Other players keep seeing the normal screen.
+
+**Select and arrange:**
+
+| Command | What it does |
 |---|---|
-| `/holo` | FancyHolograms-style text, item and block holograms, plus **spin**, **bob**, a **proximity pop-up**, per-player text and **live status colours** |
-| `/npc` | FancyNpcs-style NPCs on the vanilla **Mannequin** entity: skins, look-at, glow, scale, pose, equipment, click actions, a **spinning icon** above the head and a **pop-up info panel** |
-| `/screen` | **Map touchscreens**: walls of maps you click on, with your own PNG/JPG images, pages, buttons, hover effects, a mouse cursor, player heads, progress bars and live graphs |
+| `/se select [n]` | Select by number (`/se list` shows all) |
+| `/se list` | Lists every element on the page |
+| `/se info` | Shows what's selected |
+| `/se move <x> <y>` | Moves it. Accepts `20`, `-20` (from the far edge), `50%` and `center` |
+| `/se here` | Moves it to where you're looking |
+| `/se up\|down\|left\|right [px]` | Nudges it by a few pixels |
+| `/se size <w> <h>` | Sets the size |
+| `/se grow <+w> <+h>` | Grows or shrinks it |
+| `/se front` | Brings it to the front layer |
+| `/se back` | Sends it to the back layer |
+| `/se copy` | Duplicates it |
+| `/se remove` | Removes it |
 
-## Install
-1. Put `DreamNFM.jar` in `plugins/`. Installing PlaceholderAPI is optional.
-2. Restart the server. Every command needs `dreamnfm.admin` (op by default).
+**Add things:**
 
-## Touchscreens (`/screen`)
+| Command | What it does |
+|---|---|
+| `/se add text <text>` | Adds text where you're looking |
+| `/se add button <text>` | Adds a button |
+| `/se add rect` | Adds a box or card |
+| `/se add image <file.png>` | Adds an image from `images/` |
+| `/se add head [player]` | Adds a player's face |
+| `/se add progress` | Adds a progress bar |
+| `/se add graph [online\|tps\|mspt]` | Adds a live graph |
+| `/se add lines <a\|b\|c>` | Adds several lines of text |
 
-### Ready-made designs
-DreamNFM ships with 16 designs made for 3x2 screens. They all use a see-through background with dark cards:
+**Look:**
+
+| Command | What it does |
+|---|---|
+| `/se text <text>` | Sets the text. For `lines`, use `\|` between lines |
+| `/se color <c>` | Sets the colour |
+| `/se hover <c>` | Sets the colour when someone looks at it |
+| `/se textcolor <c>` | Sets a button's text colour |
+| `/se border <px> [c]` | Adds a border, or `off` |
+| `/se scale <1-8>` | Sets the text size |
+| `/se align left\|center\|right` | Aligns the text |
+| `/se shadow on\|off\|<colour>` | Sets the text shadow |
+| `/se set <property> <value>` | Sets any property directly |
+| `/se unset <property>` | Puts a property back to its default |
+
+Colours can be `#FF5555`, a name (`black` `white` `gray` `red` `orange` `gold` `yellow` `lime` `green` `aqua` `blue` `purple` `pink` `brown`...) or `none`.
+
+**Buttons:**
+
+| Command | What it does |
+|---|---|
+| `/se action add <action>` | Adds an action, e.g. `page:shop` |
+| `/se action remove <n>` | Removes one action |
+| `/se action clear` | Removes all actions |
+| `/se action list` | Lists the actions |
+
+**Pages and background:**
+
+| Command | What it does |
+|---|---|
+| `/se page` | Lists pages |
+| `/se page <name>` | Opens a page (`/se page open <name>` also works) |
+| `/se page add <name> [copy-of]` | New page, optionally a copy of another |
+| `/se page remove <name>` | Removes a page |
+| `/se page rename <old> <new>` | Renames a page; button links follow |
+| `/se page start <name>` | The page players see first |
+| `/se page next <page> [sec]` | Slideshow: moves on by itself |
+| `/se page refresh <ticks>` | How often live numbers redraw |
+| `/se bg black\|none\|#hex` | Background colour. `none` = see-through, the wall shows |
+| `/se bgimage <file.png\|off>` | Background picture |
+
+**Helpers:**
+
+| Command | What it does |
+|---|---|
+| `/se grid` | Positioning grid, every 16 px; cyan = middle |
+| `/se undo` | Undoes the last change. It remembers 30 changes per screen |
+| `/se save <design>` | Saves the screen as a design to reuse anywhere |
+
+Everything the editor does is written to `plugins/DreamScreens/screens/<screen>.yml`. You can still edit that file by hand and run `/screen reload <screen>`.
+
+## Ready-made designs
+DreamScreens ships with 16 designs for 3x2 screens. They use a see-through background with dark cards:
 
 | Design | For |
 |---|---|
@@ -24,172 +130,73 @@ DreamNFM ships with 16 designs made for 3x2 screens. They all use a see-through 
 | `features` | Browse everything: 9 categories, each with its own page of buttons |
 | `stats` | TPS, MSPT, ping, players, TPS/MSPT graphs, uptime |
 | `leaderboard` | Live Dreamleaderboard top 10: podium with heads, 5 tabs |
-| `duels` | Big "1v1 DUELS" card, 2v2, ranked, party, and your stats |
+| `duels` | Big "1v1 DUELS" card, 2v2, ranked, party, your stats |
 | `homes` | DreamHomes |
-| `store` | Dreamcore `/store`, `/mediarank` |
+| `store` | Store and media rank |
 | `market` | Shop, sell, orders, auction, coin and orb shop |
-| `crates` | Dreamcrates keys and keyall timer |
-| `koth` | Dreamkoth countdown, status, rewards |
+| `crates` | Keys and keyall timer |
+| `koth` | KOTH countdown, status, rewards |
 | `rtp` | Overworld, nether, end and the 1v1 RTP queue |
-| `land` | Dreamlandclaim and Dreamteams |
-| `vaults` | Dreamvault |
-| `spawners` | Dreamspawner stats and top owners |
-| `bounty` | DreamBounty |
-| `coinflip` | Dreamcoinflip |
+| `land` | Claims and teams |
+| `vaults` | Player vaults |
+| `spawners` | Spawner stats and top owners |
+| `bounty` | Bounties |
+| `coinflip` | Coinflip |
 
-Use one of these commands:
+Use them with these commands:
+- `/screen designs` lists the designs.
+- `/screen design <screen> <design>` puts a design on a screen. The old page is kept as `.bak`.
+- `/screen create <name> <w> <h> <design>` makes a new screen with a design.
 
-```
-/screen create duels 3 2 duels
-/screen design <screen> <design>
-/screen designs
-```
+The designs live in `plugins/DreamScreens/designs/`. Edit them or add your own (`/se save`). Your edits are never overwritten.
 
-The first makes a new screen with a design. The second puts a design on an existing screen; the old page is kept as `.bak`. The third lists the designs.
-
-The designs live in `plugins/DreamNFM/designs/`. Edit them or add your own. The plugin never overwrites your edits. All previews are in `examples/previews/`.
-
-**Built-in live values:**
-- **Server:** `{tps}`, `{mspt}` and `{uptime}`. On Folia these are for the region you stand in.
-- **Dreamleaderboard tops:** `{lb_<type>_<rank>_name}` and `{lb_<type>_<rank>_value}`. Types are money, playtime, mobs, deaths, placed and broken; ranks go from 1 to 10.
-- **The viewer's own stats:** `{stat_playtime}`, `{stat_kills}`, `{stat_deaths}`, `{stat_mobs}`, `{stat_placed}`, `{stat_broken}`.
-
-MiniMessage colours that come from other plugins' placeholders, like `<#7CFC9B>`, are shown correctly. Long values are trimmed with `max-width`.
-
-### Make your own
-1. Stand in front of a wall and look at the block where the **top-left** corner should go.
-2. Run `/screen create lobby 4 3`. That makes 4 maps wide by 3 tall; the screen grows right and down.
-3. The screen gets a ready-made template: a title, your name, an online-status line, buttons, a progress bar and an info page with your head and an online graph.
-4. Edit `plugins/DreamNFM/screens/lobby.yml`, then run `/screen reload lobby`.
-
-Put your own pictures in `plugins/DreamNFM/images/`. They are scaled and dithered to map colours automatically.
-
-```yaml
-start: home
-idle-page: sleep          # optional: shown to players further than wake-range
-wake-range: 10
-click-sound: ui.button.click
-pages:
-  home:
-    background: "#14161F"           # or background-image: bg.png
-    refresh: 20                     # ticks between redraws (placeholders)
-    next: news                      # optional slideshow...
-    seconds: 10                     # ...after 10 s
-    elements:
-      - type: image
-        file: logo.png
-        x: center
-        y: 8
-        w: 64
-        h: 64
-      - type: text
-        x: center
-        y: 80
-        scale: 2
-        text: "&#7AA2FF&lWelcome {player}"
-      - type: button
-        x: center
-        y: 50%
-        w: 60%
-        h: 26
-        text: "&lPLAY"
-        icon: sword.png
-        color: "#22C55E"
-        hover-color: "#4ADE80"
-        actions: ["server:duels", "sound:entity.player.levelup"]
-      - type: progress
-        x: center
-        y: -8
-        w: 80%
-        h: 6
-        value: "{online}"
-        max: "{max}"
-        text: "{percent}%"
-        color: "<status:{online};0=#EF4444;default=#22C55E>"
-```
-
-**Positions and sizes:** `20` is pixels from the left/top, `-20` counts from the right/bottom, `50%` is a share of the screen, and `center` centres the element.
-
-**Elements:**
-
-| Type | What it draws | Extra options |
-|---|---|---|
-| `rect` | A coloured box | `round`, `border`, `border-color`, `hover-color` |
-| `text` | One line of text | `scale`, `align`, `shadow`, `shadow-color`, `max-width` |
-| `lines` | Several lines of text | `lines: [...]`, `spacing` |
-| `image` | One of your pictures | `file` (`w`/`h` are optional) |
-| `button` | A clickable button | `text`, `icon`, `color`, `hover-color`, `text-color` |
-| `head` | A player's face | `player`, `size` |
-| `progress` | A progress bar | `value`, `max`, `text` with `{percent}` |
-| `graph` | A live graph | `source: online`, `tps` or `mspt` |
-
-**Options for any element:**
-- `actions` makes the element clickable.
-- `permission` shows the element only to players who have that permission.
-- `cooldown` sets the click cooldown in ms.
-
-**Actions:**
-
-| Action | What it does |
-|---|---|
-| `page:<page>` | Opens another page |
-| `page:back` | Goes back to the previous page |
-| `close` | Returns to the start page |
-| `message:<text>` | Sends the player a message |
-| `player:<cmd>` | Runs a command as the player |
-| `console:<cmd>` | Runs a command from the console |
-| `sound:<key>[:vol:pitch]` | Plays a sound |
-| `teleport:world,x,y,z[,yaw,pitch]` | Teleports the player |
-| `server:<name>` | Sends the player to a BungeeCord/Velocity server |
-
-**How touching works:**
-- You can click from up to `touchrange` blocks away (default 8): punch, left-click the air or right-click.
-- The screen shows a cursor where you look, and buttons light up when you hover over them.
-- Every player sees their own page, hover and placeholders.
-
-**Commands:**
-
+## Screens: commands
 | Command | What it does |
 |---|---|
-| `/screen create <name> <w> <h> [design]` | Makes a new screen |
-| `/screen designs` | Lists the ready-made designs |
-| `/screen design <screen> <design>` | Puts a design on a screen |
+| `/screen create <name> <w> <h> [design]` | Look at the wall block for the top-left corner. The screen grows right and down. 1x1 up to 10x10 |
+| `/screen create <name> <w> <h> [design] at <world> <x> <y> <z> <facing>` | Same from the console. The coordinates are the block in front of the wall |
 | `/screen delete <name>` | Removes a screen |
 | `/screen list` | Lists all screens |
 | `/screen info <name>` | Shows a screen's details |
 | `/screen tp <name>` | Teleports you in front of a screen |
 | `/screen reload [name]` | Reloads pages and images |
-| `/screen page <screen> <page\|back\|home> [player]` | Opens a page for a player |
-| `/screen images` | Lists your image files |
+| `/screen page <screen> <page\|back\|home> [player]` | Opens a page for someone |
 | `/screen set <name> viewrange\|touchrange\|cursor <value>` | Changes a screen setting |
 | `/screen icon <name> <item\|off> [scale] [spin]` | Puts a spinning item above the screen, e.g. `red_bed` |
+| `/screen images` | Lists your images (`plugins/DreamScreens/images/`, PNG or JPG) |
 | `/screen respawn <name>` | Places a screen's frames again |
 
-Screens of up to about 6x4 are recommended. The limit is 10x10.
+**How touching works:**
+- Players click from up to 8 blocks away (punch, left-click the air, or right-click).
+- They see a mouse cursor, buttons light up when looked at, and buttons press down when clicked.
+- Every player sees their own page, hover and placeholders.
 
-## Holograms (`/holo help`)
-- **Text options:** `create`, `line add|set|insert|remove`, `item`, `block`, `scale`, `billboard`, `background`, `shadow`, `seethrough`, `align`, `opacity`, `linewidth`, `glow`, `brightness`.
-- **Animation:**
-  - `spin <deg/s>` turns item and block holograms smoothly.
-  - `bob <blocks>` makes them float up and down.
-- **`proximity <radius>`:** the hologram pops open with a scale animation when a player comes near, and closes again when they leave.
-- **`personal`:** each player sees their own placeholders.
-- **`action add <action>`:** makes the hologram clickable.
+## Live values
+| Kind | Placeholders |
+|---|---|
+| Player and server | `{player}` `{online}` `{max}` `{ping}` `{world}` `{time}` `{date}` `{tps}` `{mspt}` `{uptime}` |
+| Dreamleaderboard top 10 | `{lb_<type>_<rank>_name}` and `{lb_<type>_<rank>_value}`. Types: money, playtime, mobs, deaths, placed, broken |
+| Your own stats | `{stat_playtime}` `{stat_kills}` `{stat_deaths}` `{stat_mobs}` `{stat_placed}` `{stat_broken}` |
+| Countdown | `{countdown:2026-12-31 20:00}` |
+| Colours that change with a value | `<status:{tps};19+=#22C55E;15-18.99=#FACC15;default=#EF4444>` |
 
-**Placeholders:**
-- **Built in:** `{player}`, `{online}`, `{max}`, `{world}`, `{ping}`, `{time}`, `{date}`.
-- **Countdown:** `{countdown:2026-12-31 20:00}`.
-- **PlaceholderAPI:** `%...%` placeholders, if PlaceholderAPI is installed.
-- **Live status rules:** `<status:%server_online%;0=&cEmpty;1-10=&eQuiet;default=&aBusy>`. These also work inside screen colours.
+PlaceholderAPI `%placeholders%` also work, including their MiniMessage colours. On Folia, TPS and MSPT are for the region you stand in.
 
-## NPCs (`/npc help`)
-NPCs use the vanilla Mannequin entity, so they need 1.21.9+.
+## Holograms (`/holo help`) and NPCs (`/npc help`)
+**Holograms:**
+- Text, item and block holograms
+- Spin, bob, and a pop-up when a player comes near
+- Per-player placeholders, click actions, and all the FancyHolograms options
 
-- **Basics:** `create <name> [skin]`, `skin`, `name`, `lookat`, `glow`, `scale`, `pose`, `equip`, `action`.
-- **`icon`:** a spinning item floats above the head.
-- **`panel add <line>`:** an info hologram pops open when a player walks up to the NPC.
+**NPCs:**
+- Built on the vanilla Mannequin entity (Paper 1.21.9+)
+- Skins, look-at, glow, pose, equipment and click actions
+- A spinning icon above the head and a pop-up info panel
 
-## Folia notes
-- Everything runs on the correct region thread. Entities spawn only near players and are never saved to the world, so a crash can't leave copies behind.
-- On Folia the NPC glow is always white, because Folia has no scoreboard teams.
-- Bedrock (Geyser) players see the screens. They may not see Mannequin NPCs or display-entity holograms.
+On older servers or on Spigot, `/npc` explains that NPCs need Paper 1.21.9+. Screens and holograms still work.
+
+## Notes
+- **Coming from DreamNFM:** your `plugins/DreamNFM` folder is copied over on first start. Permissions are now `dreamscreens.*`. `/dreamnfm` and `/nfm` still work as aliases.
+- **Performance:** screens only exist for nearby players. Pages with nothing live on them never redraw on their own. The cursor updates every tick only for players standing in front of a screen.
+- **Bedrock (Geyser):** players see screens, but may see the item-frame border. Holograms and NPCs may not show.
+- **Building from source:** `mvn package` creates `dist/target/DreamScreens.jar`. Core is Java 17; the NPC part is Java 21 and only loads on servers that have Mannequins.
