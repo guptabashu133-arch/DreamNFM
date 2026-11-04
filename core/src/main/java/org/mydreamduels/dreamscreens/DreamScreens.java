@@ -33,6 +33,7 @@ public class DreamScreens extends JavaPlugin {
     private HologramManager holograms;
     private NpcService npcs = NpcService.NONE;
     private ScreenManager screens;
+    private org.mydreamduels.dreamscreens.license.DreamLicense license;
 
     @Override
     public void onEnable() {
@@ -73,9 +74,13 @@ public class DreamScreens extends JavaPlugin {
         bind("screenedit", edit);
 
         for (Player p : getServer().getOnlinePlayers()) tracker.start(p);
-        getLogger().info("Enabled on " + PlatformSupport.name() + " - " + holograms.names().size() + " holograms, "
-                + npcs.names().size() + " NPCs, " + screens.names().size() + " screens"
-                + (Placeholders.hasPapi() ? ", PlaceholderAPI hooked." : "."));
+        org.mydreamduels.dreamscreens.license.Banner.print(this,
+                "Server", "\u00a7f" + PlatformSupport.name() + " " + getServer().getBukkitVersion().split("-")[0],
+                "Screens", "\u00a7f" + screens.names().size() + " \u00a77(" + screens.designs().names().size() + " designs)",
+                "Holo/NPC", "\u00a7f" + holograms.names().size() + " holograms, " + (npcs.available() ? npcs.names().size() + " NPCs" : "\u00a77NPCs need Paper 1.21.9+"),
+                "Hooks", Placeholders.hasPapi() ? "\u00a7aPlaceholderAPI" : "\u00a77PlaceholderAPI not installed",
+                "Help", "\u00a7f/screen \u00a77and \u00a7f/se \u00a77(edit screens in game)");
+        license = startLicense();
     }
 
     /** The plugin used to be called DreamNFM: carry its screens, holograms, NPCs and images over once. */
@@ -104,8 +109,14 @@ public class DreamScreens extends JavaPlugin {
         c.setTabCompleter(executor);
     }
 
+    /** Dreamscube license check (see license/DreamLicense). */
+    protected org.mydreamduels.dreamscreens.license.DreamLicense startLicense() {
+        return org.mydreamduels.dreamscreens.license.DreamLicense.start(this);
+    }
+
     @Override
     public void onDisable() {
+        if (license != null) license.stop();
         if (tracker != null) tracker.shutdown();
         if (screens != null) screens.shutdown();
         if (npcs != null) npcs.shutdown();

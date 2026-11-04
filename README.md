@@ -195,6 +195,20 @@ PlaceholderAPI `%placeholders%` also work, including their MiniMessage colours. 
 
 On older servers or on Spigot, `/npc` explains that NPCs need Paper 1.21.9+. Screens and holograms still work.
 
+## License (Dreamscube)
+DreamScreens checks its license with the Dreamscube license server (https://dreamscube.fun), the same system the other Dream plugins use.
+
+- **Key:** `license-key` in `config.yml`. If DreamScreens was downloaded from BuiltByBit, the buyer's key is put into the jar automatically and copied to the config on first start.
+- **Checks:** on start, then every heartbeat (30 min by default). Answers are signed (Ed25519), so a fake license server can't unlock it.
+- **Server unreachable:** the last good answer keeps the plugin running until its grace time ends (48 h by default). A Cloudflare hiccup never takes a customer's server down.
+- **Wrong key, revoked, IP limit, and so on:** the plugin switches itself off and the console says why and what to do.
+- **Updates:** ops get an in-game note when a newer version is set in the admin panel.
+
+**Admin panel setup (once):**
+1. Products → add **DreamScreens**.
+2. Set ID `dreamscreens` and key prefix `DS`.
+3. Set the BuiltByBit resource ID once the resource is uploaded.
+
 ## Notes
 - **Coming from DreamNFM:** your `plugins/DreamNFM` folder is copied over on first start. Permissions are now `dreamscreens.*`. `/dreamnfm` and `/nfm` still work as aliases.
 - **Performance:** screens only exist for nearby players. Pages with nothing live on them never redraw on their own. The cursor updates every tick only for players standing in front of a screen.
