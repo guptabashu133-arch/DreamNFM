@@ -3,7 +3,7 @@
 Clickable **map touchscreens** you build and edit **in game**, with 16 ready-made designs. Holograms and NPCs come included.
 
 - **Platforms:** Spigot, Paper, Purpur and Folia
-- **Versions:** 1.20.4 up to 26.x. NPCs need Paper 1.21.9+
+- **Versions:** 1.21 up to 26.x. NPCs need Paper 1.21.9+
 - **Requirements:** nothing else needed. PlaceholderAPI is optional
 
 ![All designs](examples/previews/all-designs.png)
@@ -275,4 +275,4 @@ DreamScreens checks its license with the Dreamscube license server (https://drea
 - **Coming from DreamNFM:** your `plugins/DreamNFM` folder is copied over on first start. Permissions are now `dreamscreens.*`. `/dreamnfm` and `/nfm` still work as aliases.
 - **Performance:** screens only exist for nearby players. Pages with nothing live on them never redraw on their own. The cursor updates every tick only for players standing in front of a screen.
 - **Bedrock (Geyser):** players see screens, but may see the item-frame border. Holograms and NPCs may not show.
-- **Building from source:** `mvn package` creates `dist/target/DreamScreens.jar`. Core is Java 17; the NPC part is Java 21 and only loads on servers that have Mannequins.
+- **Building from source:** `mvn package` creates `dist/target/DreamScreens.jar`. Built with Java 21. The NPC part only loads on servers that have Mannequins.

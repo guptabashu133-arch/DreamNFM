@@ -74,12 +74,7 @@ public class DreamScreens extends JavaPlugin {
         bind("screenedit", edit);
 
         for (Player p : getServer().getOnlinePlayers()) tracker.start(p);
-        org.mydreamduels.dreamscreens.license.Banner.print(this,
-                "Server", "\u00a7f" + PlatformSupport.name() + " " + getServer().getBukkitVersion().split("-")[0],
-                "Screens", "\u00a7f" + screens.names().size() + " \u00a77(" + screens.designs().names().size() + " designs)",
-                "Holo/NPC", "\u00a7f" + holograms.names().size() + " holograms, " + (npcs.available() ? npcs.names().size() + " NPCs" : "\u00a77NPCs need Paper 1.21.9+"),
-                "Hooks", Placeholders.hasPapi() ? "\u00a7aPlaceholderAPI" : "\u00a77PlaceholderAPI not installed",
-                "Help", "\u00a7f/screen \u00a77and \u00a7f/se \u00a77(edit screens in game)");
+        printBanner();
         license = startLicense();
     }
 
@@ -107,6 +102,21 @@ public class DreamScreens extends JavaPlugin {
         }
         c.setExecutor(executor);
         c.setTabCompleter(executor);
+    }
+
+    private void printBanner() {
+        String server = "\u00a7f" + PlatformSupport.name() + " " + getServer().getBukkitVersion().split("-")[0];
+        String screenLine = "\u00a7f" + screens.names().size() + " \u00a77(" + screens.designs().names().size() + " designs)";
+        String npcPart;
+        if (npcs.available()) npcPart = npcs.names().size() + " NPCs";
+        else npcPart = "\u00a77NPCs need Paper 1.21.9+";
+        String holoLine = "\u00a7f" + holograms.names().size() + " holograms, " + npcPart;
+        String hooks;
+        if (Placeholders.hasPapi()) hooks = "\u00a7aPlaceholderAPI";
+        else hooks = "\u00a77PlaceholderAPI not installed";
+        String[] lines = {"Server", server, "Screens", screenLine, "Holo/NPC", holoLine, "Hooks", hooks,
+                "Help", "\u00a7f/screen \u00a77and \u00a7f/se \u00a77(edit screens in game)"};
+        org.mydreamduels.dreamscreens.license.Banner.print(this, lines);
     }
 
     /** Dreamscube license check (see license/DreamLicense). */

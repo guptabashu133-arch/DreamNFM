@@ -11,16 +11,17 @@
     <artifactId>dreamscreens-core</artifactId>
 
     <properties>
-        <maven.compiler.release>17</maven.compiler.release>
+        <maven.compiler.release>21</maven.compiler.release>
     </properties>
 
     <dependencies>
-        <!-- Oldest API we build against: anything used here exists on 1.20.4.
-             Paper-only calls are guarded at runtime (see platform/PlatformSupport). -->
+        <!-- Built exactly like the other Dream plugins (Java 21, 1.21 API): Folia 26.x
+             rewrites older-style plugin classes on load and broke the Java 17 build.
+             Paper-only calls are still guarded at runtime (see platform/PlatformSupport). -->
         <dependency>
             <groupId>io.papermc.paper</groupId>
             <artifactId>paper-api</artifactId>
-            <version>1.20.4-R0.1-SNAPSHOT</version>
+            <version>1.21.11-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

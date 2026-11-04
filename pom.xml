@@ -6,8 +6,8 @@
 
     <!--
       DreamScreens is built in three parts so ONE jar runs everywhere:
-        core - everything except NPCs. Java 17 + the 1.20.4 API, so it loads on
-               Spigot / Paper / Purpur / Folia from 1.20.4 up to the newest versions.
+        core - everything except NPCs. Java 21 + the 1.21 API: Spigot / Paper /
+               Purpur / Folia 1.21 up to the newest versions.
         npc  - NPCs on the vanilla Mannequin entity (needs 1.21.9+, Java 21).
                Only loaded when the server actually has Mannequins.
         dist - glues both into target/DreamScreens.jar (dist/target).

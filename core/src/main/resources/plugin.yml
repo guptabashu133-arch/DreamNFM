@@ -1,7 +1,7 @@
 name: DreamScreens
 version: '${project.version}'
 main: org.mydreamduels.dreamscreens.DreamScreens
-api-version: '1.20'
+api-version: '1.21'
 author: javacoder99
 description: Clickable map touchscreens with an in-game editor, holograms and NPCs - Spigot, Paper, Purpur and Folia.
 website: https://github.com/guptabashu133-arch
