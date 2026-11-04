@@ -20,6 +20,12 @@ public final class Element {
     public final int scale, spacing, borderSize, iconSize;
     public final String color, hoverColor, textColor, borderColor, background, shadowColor;
     public final boolean shadow, round;
+    /** Text: slide sideways inside its width (marquee). speed = pixels per second. */
+    public final boolean scroll;
+    public final int speed;
+    /** Text: a .ttf/.otf file from plugins/DreamScreens/fonts and its pixel size (null = Minecraft font). */
+    public final String font;
+    public final int fontSize;
     public final Canvas.Align align;
     public final String file, icon, player, value, max, source, permission;
     public final ActionList actions = new ActionList();
@@ -82,6 +88,11 @@ public final class Element {
         this.max = n.str("max", "100");
         this.source = n.str("source", "online").toLowerCase(Locale.ROOT);
         this.permission = n.str("permission", null);
+        this.scroll = n.bool("scroll", false);
+        this.speed = Math.max(1, Math.min(400, n.integer("speed", 30)));
+        String f = n.str("font", null);
+        this.font = f == null || f.isBlank() || f.equalsIgnoreCase("default") || f.equalsIgnoreCase("minecraft") ? null : f;
+        this.fontSize = Math.max(6, Math.min(128, n.integer("font-size", 16)));
         actions.load(n.list("actions"), log, where);
         actions.setCooldownMs(n.integer("cooldown", 250));
         if (type == Type.IMAGE && (file == null || file.isBlank())) throw new IllegalArgumentException("image needs 'file: name.png'");

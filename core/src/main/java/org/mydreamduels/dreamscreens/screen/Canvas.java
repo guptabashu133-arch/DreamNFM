@@ -13,6 +13,8 @@ public final class Canvas {
 
     public final int width, height;
     public final byte[] pixels;
+    /** Drawing is limited to this rectangle (the whole canvas unless clip() was called). */
+    private int clipX0, clipY0, clipX1, clipY1;
 
     public Canvas(int width, int height) {
         this(width, height, new byte[width * height]);
@@ -23,10 +25,26 @@ public final class Canvas {
         this.width = width;
         this.height = height;
         this.pixels = pixels;
+        unclip();
+    }
+
+    /** Only draw inside x..x+w, y..y+h until unclip(). */
+    public void clip(int x, int y, int w, int h) {
+        clipX0 = Math.max(0, x);
+        clipY0 = Math.max(0, y);
+        clipX1 = Math.min(width, x + Math.max(0, w));
+        clipY1 = Math.min(height, y + Math.max(0, h));
+    }
+
+    public void unclip() {
+        clipX0 = 0;
+        clipY0 = 0;
+        clipX1 = width;
+        clipY1 = height;
     }
 
     public void set(int x, int y, byte c) {
-        if (x >= 0 && y >= 0 && x < width && y < height && c != Palette.TRANSPARENT) pixels[y * width + x] = c;
+        if (x >= clipX0 && y >= clipY0 && x < clipX1 && y < clipY1 && c != Palette.TRANSPARENT) pixels[y * width + x] = c;
     }
 
     public byte get(int x, int y) {
@@ -38,7 +56,7 @@ public final class Canvas {
     }
 
     public void rect(int x, int y, int w, int h, byte c) {
-        int x0 = Math.max(0, x), y0 = Math.max(0, y), x1 = Math.min(width, x + w), y1 = Math.min(height, y + h);
+        int x0 = Math.max(clipX0, x), y0 = Math.max(clipY0, y), x1 = Math.min(clipX1, x + w), y1 = Math.min(clipY1, y + h);
         if (c == Palette.TRANSPARENT) return;
         for (int yy = y0; yy < y1; yy++) java.util.Arrays.fill(pixels, yy * width + x0, yy * width + Math.max(x0, x1), c);
     }

@@ -22,12 +22,13 @@ import java.util.Locale;
  *   sound:entity.player.levelup[:volume:pitch]         teleport:world,0,100,0[,yaw,pitch]
  *   server:lobby (BungeeCord/Velocity)                 page:shop (screens: open a page)
  *   close (screens: back to the first page)
+ *   link:https://discord.gg/abc Join our Discord   (clickable link in chat; text after the URL is optional)
  */
 public record Action(Type type, String value) {
 
-    public enum Type { MESSAGE, PLAYER, CONSOLE, SOUND, TELEPORT, SERVER, PAGE, CLOSE }
+    public enum Type { MESSAGE, PLAYER, CONSOLE, SOUND, TELEPORT, SERVER, PAGE, CLOSE, LINK }
 
-    public static final List<String> EXAMPLES = List.of("message:", "player:", "console:", "sound:", "teleport:", "server:", "page:", "close");
+    public static final List<String> EXAMPLES = List.of("message:", "player:", "console:", "sound:", "teleport:", "server:", "page:", "close", "link:");
 
     public static Action parse(String text) {
         String t = text.trim();
@@ -43,9 +44,11 @@ public record Action(Type type, String value) {
             case "server", "connect" -> Type.SERVER;
             case "page" -> Type.PAGE;
             case "close", "home" -> Type.CLOSE;
+            case "link", "url", "open" -> Type.LINK;
             default -> throw new IllegalArgumentException("Unknown action '" + head + "'. Use: " + String.join(" ", EXAMPLES));
         };
         if (value.isEmpty() && type != Type.CLOSE) throw new IllegalArgumentException("Action '" + head + "' needs a value.");
+        if (type == Type.LINK && !value.matches("(?i)https?://\\S+(\\s.*)?")) throw new IllegalArgumentException("link: needs a web address, e.g. link:https://discord.gg/abc Join our Discord");
         return new Action(type, value);
     }
 
@@ -93,6 +96,11 @@ public record Action(Type type, String value) {
                     p.sendPluginMessage(plugin, "BungeeCord", bytes.toByteArray());
                 } catch (IOException ignored) {
                 }
+            }
+            case LINK -> {
+                int sp = v.indexOf(' ');
+                String url = sp < 0 ? v : v.substring(0, sp), label = sp < 0 ? url : v.substring(sp + 1).trim();
+                Text.link(p, url, label);
             }
             case PAGE, CLOSE -> {
             }

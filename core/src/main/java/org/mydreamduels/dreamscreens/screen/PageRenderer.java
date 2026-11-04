@@ -22,6 +22,16 @@ public final class PageRenderer {
         double[] samples(String source);
 
         boolean allowed(String permission);
+
+        /** Clock for animations (scrolling text, GIFs). */
+        default long now() {
+            return System.currentTimeMillis();
+        }
+
+        /** Text in a custom font as map pixels, or null (no such font / still loading). */
+        default ImageStore.Img fontText(String font, int size, String text, int rgb, int shadowRgb) {
+            return null;
+        }
     }
 
     /** Area of an element as drawn: index into page.elements(). */
@@ -187,17 +197,45 @@ public final class PageRenderer {
                 return new int[]{x, y, w, h};
             }
             case TEXT -> {
-                String t = e.maxWidth.isAuto() ? ctx.text(e.text) : fit(ctx.text(e.text), e.maxWidth.size(W, W), e.scale);
-                int w = Canvas.textWidth(t, e.scale), h = 8 * e.scale;
+                String raw = ctx.text(e.text);
+                int col = hovered && e.clickable() ? rgb(ctx, e.hoverColor, 0xFFFF55) : rgb(ctx, e.color, 0xFFFFFF);
+                ImageStore.Img fontImg = null;
+                if (e.font != null) {
+                    fontImg = ctx.fontText(e.font, e.fontSize, raw, col, shadow(ctx, e));
+                    if (fontImg == null || fontImg.pixels() == null) return null; // font still loading
+                }
+                if (e.scroll) {
+                    // marquee: the text slides right-to-left through a box, entering from the right edge
+                    int h = fontImg != null ? fontImg.height() : 8 * e.scale;
+                    int bx = e.x.isCenter() ? 0 : e.x.pos(W, 0);
+                    int bw = e.w.isAuto() ? W - bx : e.w.size(W, W - bx);
+                    int by = e.y.pos(H, h);
+                    int tw = fontImg != null ? fontImg.width() : Canvas.textWidth(raw, e.scale);
+                    long span = (long) bw + tw + 16;
+                    int off = (int) Math.floorMod(ctx.now() * e.speed / 1000L, span);
+                    int tx = bx + bw - off;
+                    c.clip(bx, by, bw, h + e.scale);
+                    if (fontImg != null) c.blit(fontImg.pixels(), fontImg.width(), fontImg.height(), tx, by);
+                    else c.text(raw, tx, by, e.scale, col, shadow(ctx, e), Canvas.Align.LEFT);
+                    c.unclip();
+                    return new int[]{bx, by, bw, h};
+                }
+                String t = fontImg != null || e.maxWidth.isAuto() ? raw : fit(raw, e.maxWidth.size(W, W), e.scale);
+                int w = fontImg != null ? fontImg.width() : Canvas.textWidth(t, e.scale), h = fontImg != null ? fontImg.height() : 8 * e.scale;
                 int anchor = e.x.isCenter() ? W / 2 : e.x.pos(W, 0);
                 int y = e.y.pos(H, h);
-                int col = hovered && e.clickable() ? rgb(ctx, e.hoverColor, 0xFFFF55) : rgb(ctx, e.color, 0xFFFFFF);
-                c.text(t, anchor, y, e.scale, col, shadow(ctx, e), e.align);
                 int left = switch (e.align) {
                     case LEFT -> anchor;
                     case CENTER -> anchor - w / 2;
                     case RIGHT -> anchor - w;
                 };
+                if (fontImg != null) {
+                    if (!e.maxWidth.isAuto()) c.clip(left, y, e.maxWidth.size(W, W), h);
+                    c.blit(fontImg.pixels(), fontImg.width(), fontImg.height(), left, y);
+                    c.unclip();
+                } else {
+                    c.text(t, anchor, y, e.scale, col, shadow(ctx, e), e.align);
+                }
                 return new int[]{left, y, w, h};
             }
             case LINES -> {

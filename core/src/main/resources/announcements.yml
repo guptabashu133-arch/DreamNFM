@@ -1,0 +1,143 @@
+# Announcements take over screens for a few seconds, then everything goes back.
+#   /screen announce <name> [seconds] [screen ...]      e.g. /screen announce koth 30
+#   /screen announce text <seconds> <Big title|line two|line three>
+#   /screen announce stop
+# Other plugins can run these from the console (e.g. when a KOTH starts).
+# Pages use center / % so they fit every screen size. Same elements as normal pages.
+pages:
+  koth:
+    background: none
+    sound: entity.ender_dragon.growl
+    elements:
+      - type: rect
+        x: center
+        y: center
+        w: 94%
+        h: 80%
+        color: "#11131A"
+        border: 2
+        border-color: "#F97316"
+      - type: text
+        x: center
+        y: 22%
+        text: "&7KING OF THE HILL"
+        max-width: 90%
+      - type: text
+        x: center
+        y: 36%
+        scale: 3
+        text: "&lKOTH IS LIVE"
+        color: "#F97316"
+        shadow-color: "#000000"
+        max-width: 90%
+      - type: text
+        x: center
+        y: 62%
+        text: "&f%koth_status%"
+        max-width: 90%
+      - type: text
+        x: 4%
+        y: 74%
+        scroll: true
+        w: 92%
+        speed: 40
+        text: "&eRun to the hill! &7- &eHold it to win the rewards! &7- &e/koth"
+  event:
+    background: none
+    sound: block.note_block.pling
+    elements:
+      - type: rect
+        x: center
+        y: center
+        w: 94%
+        h: 80%
+        color: "#11131A"
+        border: 2
+        border-color: "#A78BFA"
+      - type: text
+        x: center
+        y: 30%
+        scale: 3
+        text: "&lEVENT"
+        color: "#A78BFA"
+        shadow-color: "#000000"
+        max-width: 90%
+      - type: text
+        x: center
+        y: 58%
+        text: "&fAn event is starting - join now!"
+        max-width: 90%
+  restart:
+    background: none
+    sound: block.note_block.bass
+    elements:
+      - type: rect
+        x: center
+        y: center
+        w: 94%
+        h: 80%
+        color: "#11131A"
+        border: 2
+        border-color: "#EF4444"
+      - type: text
+        x: center
+        y: 30%
+        scale: 2
+        text: "&lSERVER RESTART"
+        color: "#EF4444"
+        shadow-color: "#000000"
+        max-width: 90%
+      - type: text
+        x: center
+        y: 56%
+        text: "&fBack in a minute - don't go far!"
+        max-width: 90%
+  giveaway:
+    background: none
+    sound: entity.player.levelup
+    elements:
+      - type: rect
+        x: center
+        y: center
+        w: 94%
+        h: 80%
+        color: "#11131A"
+        border: 2
+        border-color: "#22C55E"
+      - type: text
+        x: center
+        y: 30%
+        scale: 3
+        text: "&lGIVEAWAY"
+        color: "#22C55E"
+        shadow-color: "#000000"
+        max-width: 90%
+      - type: text
+        x: center
+        y: 58%
+        text: "&fStay online to win!"
+        max-width: 90%
+  maintenance:
+    background: none
+    elements:
+      - type: rect
+        x: center
+        y: center
+        w: 94%
+        h: 80%
+        color: "#11131A"
+        border: 2
+        border-color: "#FACC15"
+      - type: text
+        x: center
+        y: 30%
+        scale: 2
+        text: "&lMAINTENANCE"
+        color: "#FACC15"
+        shadow-color: "#000000"
+        max-width: 90%
+      - type: text
+        x: center
+        y: 56%
+        text: "&fWe're improving things - thanks for waiting"
+        max-width: 90%

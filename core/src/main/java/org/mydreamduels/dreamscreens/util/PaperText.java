@@ -14,6 +14,12 @@ final class PaperText {
         td.text(LegacyComponentSerializer.legacySection().deserialize(legacy));
     }
 
+    static void link(Player p, String url, String legacy) {
+        p.sendMessage(LegacyComponentSerializer.legacySection().deserialize(legacy)
+                .clickEvent(net.kyori.adventure.text.event.ClickEvent.openUrl(url))
+                .hoverEvent(net.kyori.adventure.text.event.HoverEvent.showText(net.kyori.adventure.text.Component.text(url))));
+    }
+
     static void actionBar(Player p, String legacy) {
         p.sendActionBar(LegacyComponentSerializer.legacySection().deserialize(legacy));
     }

@@ -93,6 +93,24 @@ public final class Text {
         else td.setText(color(text));
     }
 
+    /** Clickable link in chat (opens the browser). Falls back to plain text where clicks aren't supported. */
+    public static void link(org.bukkit.entity.Player p, String url, String label) {
+        String shown = color("&b&n" + label);
+        try {
+            if (ADVENTURE) {
+                PaperText.link(p, url, shown);
+                return;
+            }
+            net.md_5.bungee.api.chat.BaseComponent[] parts = net.md_5.bungee.api.chat.TextComponent.fromLegacyText(shown);
+            for (net.md_5.bungee.api.chat.BaseComponent part : parts) {
+                part.setClickEvent(new net.md_5.bungee.api.chat.ClickEvent(net.md_5.bungee.api.chat.ClickEvent.Action.OPEN_URL, url));
+            }
+            p.spigot().sendMessage(parts);
+        } catch (Throwable t) {
+            p.sendMessage(shown + color(" &7" + url));
+        }
+    }
+
     /** Action bar message from &-codes (Paper API on Paper, BungeeCord chat API on Spigot). */
     public static void actionBar(org.bukkit.entity.Player p, String text) {
         try {

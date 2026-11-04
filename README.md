@@ -91,7 +91,7 @@ Colours can be `#FF5555`, a name (`black` `white` `gray` `red` `orange` `gold` `
 
 | Command | What it does |
 |---|---|
-| `/se action add <action>` | Adds an action, e.g. `page:shop` |
+| `/se action add <action>` | Adds an action, e.g. `page:shop` or `link:https://...` |
 | `/se action remove <n>` | Removes one action |
 | `/se action clear` | Removes all actions |
 | `/se action list` | Lists the actions |
@@ -118,8 +118,67 @@ Colours can be `#FF5555`, a name (`black` `white` `gray` `red` `orange` `gold` `
 | `/se grid` | Positioning grid, every 16 px; cyan = middle |
 | `/se undo` | Undoes the last change. It remembers 30 changes per screen |
 | `/se save <design>` | Saves the screen as a design to reuse anywhere |
+| `/se scroll on [speed]` | Makes text scroll like a news ticker |
+| `/se font <file.ttf> [size]` | Uses a custom font on text |
+| `/se transition <type> [ticks]` | Animates page changes |
+| `/se sync on\|off` | Slideshow follows the clock |
+| `/se sound <sound>` | Sound on every page change |
+| `/se auto add <page> <condition>` | Auto page |
+| `/se schedule add <page> <from> <to>` | Scheduled page |
 
 Everything the editor does is written to `plugins/DreamScreens/screens/<screen>.yml`. You can still edit that file by hand and run `/screen reload <screen>`.
+
+## Live screens: slideshows, announcements, auto pages
+
+**Slideshow:** a page moves on to the next by itself.
+```
+/se page next event 10
+```
+Chain pages into a loop. With `/se sync on`, the slideshow follows the clock, so everyone sees the same page at the same time.
+
+**Transitions:** `/se transition wipe|slide|down|split|none [ticks]` animates every page change.
+
+**Sounds:**
+- `/se sound <sound>` plays on every page change.
+- `/se page sound <sound>` plays when one particular page opens.
+
+**Announcements:** take over every screen for a few seconds, then everything goes back to normal.
+
+| Command | What it does |
+|---|---|
+| `/screen announce koth 30` | Shows the `koth` announcement for 30 seconds. Ready pages: koth, event, restart, giveaway, maintenance |
+| `/screen announce text 20 Big title\|second line` | Shows your own text for 20 seconds |
+| `/screen announce event 30 lobby arena` | Shows it on just these screens |
+| `/screen announce stop` | Ends the announcement now |
+
+Edit the announcement pages in `announcements.yml`. Other plugins can run these commands from the console, e.g. when a KOTH starts.
+
+**Auto pages:** show a page while a condition holds. The first rule that holds wins.
+```
+/se auto add live %koth_is_running% == true
+/se auto add soon {countdown:2026-12-31 20:00} == LIVE
+/se auto add busy {online} >= 50
+```
+Conditions support `==` `!=` `>` `<` `>=` `<=` and `contains`. They are checked every second.
+
+**Schedule:** show a page between two times of the server clock. It also works past midnight.
+```
+/se schedule add night 22:00 06:00
+```
+
+**Linked screens:** `/screen mirror <screen> <source>` makes a screen show another screen's pages. Editing either one changes both. Add `/se sync on` and they flip pages together.
+
+**Priority**, highest first: editing → announcement → auto page → schedule → slideshow / normal page.
+
+## Moving and fancy content
+
+**Scrolling text (news ticker):** `/se add text ...`, then `/se scroll on 40`. The width comes from `/se size <w> 10`.
+
+**GIFs:** put an animated `.gif` in `images/` and use it like any image (`/se add image intro.gif`). Frames are read the way browsers show them.
+
+**Custom fonts:** put a `.ttf` in `plugins/DreamScreens/fonts`, then run `/se font MyFont.ttf 24` on a text element. `&colours`, hex and `&l` bold still work. Use `/screen fonts` to list your fonts.
+
+**Clickable links:** `/se action add link:https://discord.gg/abc Join our Discord` sends a clickable link in chat.
 
 ## Ready-made designs
 DreamScreens ships with 16 designs for 3x2 screens. They use a see-through background with dark cards:
@@ -164,6 +223,9 @@ The designs live in `plugins/DreamScreens/designs/`. Edit them or add your own (
 | `/screen set <name> viewrange\|touchrange\|cursor <value>` | Changes a screen setting |
 | `/screen icon <name> <item\|off> [scale] [spin]` | Puts a spinning item above the screen, e.g. `red_bed` |
 | `/screen images` | Lists your images (`plugins/DreamScreens/images/`, PNG or JPG) |
+| `/screen announce <name\|text\|stop> ...` | Takes over screens for a few seconds |
+| `/screen mirror <screen> <source\|off>` | Linked screens |
+| `/screen fonts` | Lists your custom fonts |
 | `/screen respawn <name>` | Places a screen's frames again |
 
 **How touching works:**

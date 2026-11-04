@@ -31,6 +31,17 @@ final class ScreenState {
     PageRenderer.Result result;
     byte[] frame;
     byte[] spare;
+    /** The page drawn right now (may be an announcement / auto page, not st.page). */
+    Page shown;
+    String shownName;
+    // page transition in progress (tNew != null)
+    byte[] tOld, tNew;
+    long tStart;
+    String tType;
+    int tTicks;
+    // auto-pages / schedule result, refreshed once a second
+    long overrideAt;
+    String overridePage;
     long lastBar;
 
     final int[] version;

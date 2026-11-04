@@ -76,6 +76,8 @@ public final class Screen implements Viewable {
     private volatile float iconScale = 1.2f;
     private volatile double iconSpin = 90;
     private volatile org.mydreamduels.dreamscreens.hologram.Hologram iconHolo;
+    /** Show another screen's pages (same content, same file) - null = own pages. */
+    private volatile String mirror;
     private final int[] mapIds;
 
     private volatile MapView[] views;
@@ -194,11 +196,23 @@ public final class Screen implements Viewable {
     }
 
     public File pagesFile() {
-        return new File(new File(plugin.getDataFolder(), "screens"), name + ".yml");
+        Screen src = mirror == null ? null : plugin.screens().get(mirror);
+        String file = src != null && src != this ? src.name() : name;
+        return new File(new File(plugin.getDataFolder(), "screens"), file + ".yml");
+    }
+
+    public String mirror() {
+        return mirror;
+    }
+
+    public void setMirror(String source) {
+        this.mirror = source;
+        reloadPages();
     }
 
     public void reloadPages() {
         pages = Page.Set.load(pagesFile(), plugin.getLogger());
+        if (mirror == null) plugin.screens().reloadMirrorsOf(this);
         for (ScreenState st : states.values()) {
             synchronized (st) {
                 if (pages.page(st.page) == null) {
@@ -402,12 +416,14 @@ public final class Screen implements Viewable {
         long now = System.currentTimeMillis();
         EditSession ed = plugin.screens().session(p);
         if (ed != null && ed.screen != this) ed = null;
-        String bar = null;
+        String bar = null, sound = null;
         synchronized (st) {
             Page page;
             boolean idle = false;
+            String mode;
+            ScreenManager.Announcement ann = ed == null ? plugin.screens().announcementFor(this, now) : null;
             if (ed != null) {
-                // editing: always the page being edited, no idle page / slideshow / hover
+                // editing: always the page being edited, no announcements / auto pages / slideshow / hover
                 page = set.page(ed.page);
                 if (page == null) {
                     page = set.startPage();
@@ -415,41 +431,69 @@ public final class Screen implements Viewable {
                 }
                 st.page = page == null ? null : page.name();
                 st.idle = false;
+                mode = "edit:" + ed.selected + ":" + ed.grid + ":";
+            } else if (ann != null) {
+                page = ann.page();
+                mode = "ann:" + ann.id() + ":";
             } else {
-                Location l = p.getLocation();
-                double dx = l.getX() - x(), dy = l.getY() - y(), dz = l.getZ() - z();
-                Page idlePage = set.idlePage() == null || set.wakeRange() <= 0 ? null : set.page(set.idlePage());
-                idle = idlePage != null && dx * dx + dy * dy + dz * dz > set.wakeRange() * set.wakeRange();
-                if (idle != st.idle) {
-                    st.idle = idle;
-                    if (!idle) {
-                        Page start = set.startPage();
-                        st.page = start == null ? null : start.name();
-                        st.history.clear();
+                Page override = override(p, st, set, now);
+                if (override != null) {
+                    page = override;
+                    mode = "page:";
+                } else {
+                    Location l = p.getLocation();
+                    double dx = l.getX() - x(), dy = l.getY() - y(), dz = l.getZ() - z();
+                    Page idlePage = set.idlePage() == null || set.wakeRange() <= 0 ? null : set.page(set.idlePage());
+                    idle = idlePage != null && dx * dx + dy * dy + dz * dz > set.wakeRange() * set.wakeRange();
+                    if (idle != st.idle) {
+                        st.idle = idle;
+                        if (!idle) {
+                            Page start = set.startPage();
+                            st.page = start == null ? null : start.name();
+                            st.history.clear();
+                            st.pageSince = now;
+                        }
+                    }
+                    page = idle ? idlePage : set.page(st.page);
+                    if (page == null && !idle) {
+                        page = set.startPage();
+                        st.page = page == null ? null : page.name();
                         st.pageSince = now;
                     }
-                }
-                page = idle ? idlePage : set.page(st.page);
-                if (page == null && !idle) {
-                    page = set.startPage();
-                    st.page = page == null ? null : page.name();
-                    st.pageSince = now;
-                }
-                if (!idle && page != null && page.next() != null && now - st.pageSince >= page.seconds() * 1000L) {
-                    Page next = set.page(page.next());
-                    if (next != null) {
-                        st.page = next.name();
-                        st.pageSince = now;
-                        page = next;
+                    if (!idle && page != null && page.next() != null) {
+                        Page synced = set.sync() ? set.syncedPage(page.name(), now) : null;
+                        if (synced != null) {
+                            // clock-driven: every player and every linked screen shows the same page
+                            if (synced != page) {
+                                st.page = synced.name();
+                                page = synced;
+                            }
+                        } else if (now - st.pageSince >= page.seconds() * 1000L) {
+                            Page next = set.page(page.next());
+                            if (next != null) {
+                                st.page = next.name();
+                                st.pageSince = now;
+                                page = next;
+                            }
+                        }
                     }
+                    mode = idle ? "idle:" : "page:";
                 }
             }
 
             Geometry.Hit hit = idle ? null : look(p, ed != null ? Math.max(touchRange, 16) : Math.min(touchRange, viewRange));
             int cx = hit == null ? -1 : hit.px(), cy = hit == null ? -1 : hit.py();
             PageRenderer.Overlay overlay = ed == null ? PageRenderer.Overlay.NONE : new PageRenderer.Overlay(ed.selected, ed.grid);
-            String key = (ed != null ? "edit:" + ed.selected + ":" + ed.grid + ":" : idle ? "idle:" : "page:") + (page == null ? "" : page.name());
+            String key = mode + (page == null ? "" : page.name());
             boolean samePage = key.equals(st.builtPage);
+            // a different page (not just a hover / edit-selection change): sound + transition
+            String shownName = page == null ? null : (ann != null ? "ann:" + ann.id() : page.name());
+            boolean switched = ed == null && st.shownName != null && shownName != null && !shownName.equals(st.shownName);
+            if (shownName != null && ed == null) st.shownName = shownName;
+            if (switched) {
+                String snd = page.sound() != null ? page.sound() : set.switchSound();
+                if (snd != null && !snd.isBlank() && !snd.equalsIgnoreCase("none")) sound = snd;
+            }
             int hover = ed != null || !samePage || st.result == null || hit == null ? -1 : st.result.elementAt(cx, cy);
             boolean force = false;
             if (st.pressed >= 0 && now >= st.pressedUntil) {
@@ -457,19 +501,23 @@ public final class Screen implements Viewable {
                 force = true;
             }
             int gen = drawGen.get();
-            boolean timed = page != null && page.dynamic() && page.refreshTicks() > 0 && now - st.lastBuild >= page.refreshTicks() * 50L;
+            boolean timed = page != null && ((page.dynamic() && page.refreshTicks() > 0 && now - st.lastBuild >= page.refreshTicks() * 50L)
+                    || (page.animated() && now - st.lastBuild >= 100));
             boolean rebuild = st.frame == null || force || !samePage || st.builtGeneration != gen || hover != st.hover || timed;
             st.hover = hover;
             if (rebuild) {
-                build(p, st, page, now, gen, key, overlay);
+                String transition = switched && st.frame != null ? set.transition() : "none";
+                build(p, st, page, now, gen, key, overlay, transition, set.transitionTicks());
+                st.shown = page;
                 if (hit != null && ed == null) {
                     int again = st.result.elementAt(cx, cy);
                     if (again != st.hover) {
                         st.hover = again;
-                        build(p, st, page, now, gen, key, overlay);
+                        build(p, st, page, now, gen, key, overlay, "none", 0);
                     }
                 }
             }
+            stepTransition(st, now);
             boolean showCursor = (cursor || ed != null) && hit != null;
             int ncx = showCursor ? cx : -1, ncy = showCursor ? cy : -1;
             boolean hot = st.hover >= 0;
@@ -497,6 +545,40 @@ public final class Screen implements Viewable {
         }
         if (v != null) for (int i : send) p.sendMap(v[i]);
         if (bar != null) EditSession.actionBar(p, bar);
+        if (sound != null) {
+            try {
+                p.playSound(p.getLocation(), sound, SoundCategory.MASTER, 0.7f, 1f);
+            } catch (RuntimeException ignored) {
+            }
+        }
+    }
+
+    /** Auto-pages (first rule that holds) and the schedule; checked at most once a second per player. */
+    private Page override(Player p, ScreenState st, Page.Set set, long now) {
+        if (set.auto().isEmpty() && set.schedule().isEmpty()) return null;
+        if (now - st.overrideAt >= 1000) {
+            st.overrideAt = now;
+            String pick = null;
+            PageRenderer.Context ctx = null;
+            for (Page.AutoRule r : set.auto()) {
+                if (ctx == null) ctx = context(p);
+                if (Conditions.test(ctx.text(r.when()))) {
+                    pick = r.page();
+                    break;
+                }
+            }
+            if (pick == null && !set.schedule().isEmpty()) {
+                java.time.LocalTime t = java.time.LocalTime.now();
+                for (Page.TimeRule r : set.schedule()) {
+                    if (r.active(t)) {
+                        pick = r.page();
+                        break;
+                    }
+                }
+            }
+            st.overridePage = pick;
+        }
+        return st.overridePage == null ? null : set.page(st.overridePage);
     }
 
     private String editBar(EditSession ed, int cx, int cy) {
@@ -507,19 +589,104 @@ public final class Screen implements Viewable {
         return b.toString();
     }
 
-    private void build(Player p, ScreenState st, Page page, long now, int gen, String key, PageRenderer.Overlay overlay) {
-        PageRenderer.Result r = PageRenderer.render(page, geo.pixelWidth(), geo.pixelHeight(), context(p), st.hover, st.pressed, overlay, st.spare);
-        byte[] old = st.frame, nw = r.canvas().pixels;
-        int W = geo.pixelWidth();
-        for (int cell = 0; cell < cells(); cell++) {
-            if (old == null || differs(old, nw, W, cell % geo.width(), cell / geo.width())) st.version[cell]++;
-        }
-        st.spare = old; // double buffer: next redraw paints into the frame before this one
-        st.frame = nw;
+    private void build(Player p, ScreenState st, Page page, long now, int gen, String key, PageRenderer.Overlay overlay,
+                       String transition, int transitionTicks) {
+        boolean animating = st.tNew != null;
+        boolean starting = !"none".equals(transition) && st.frame != null;
+        // while a transition runs the frames are held on to, so draw into a fresh array
+        PageRenderer.Result r = PageRenderer.render(page, geo.pixelWidth(), geo.pixelHeight(), context(p), st.hover, st.pressed, overlay,
+                animating || starting ? null : st.spare);
         st.result = r;
         st.lastBuild = now;
         st.builtGeneration = gen;
         st.builtPage = key;
+        byte[] nw = r.canvas().pixels;
+        if (starting) {
+            st.tOld = animating ? st.frame : st.frame; // what's on screen right now slides out
+            st.tNew = nw;
+            st.tStart = now;
+            st.tType = transition;
+            st.tTicks = Math.max(2, transitionTicks);
+            st.spare = null;
+            return; // stepTransition() puts the frames up
+        }
+        if (animating) {
+            st.tNew = nw; // keep animating towards the newest picture
+            return;
+        }
+        show(st, nw);
+    }
+
+    /** Makes px the picture on screen; marks the cells that changed so they get sent. */
+    private void show(ScreenState st, byte[] px) {
+        byte[] old = st.frame;
+        int W = geo.pixelWidth();
+        for (int cell = 0; cell < cells(); cell++) {
+            if (old == null || differs(old, px, W, cell % geo.width(), cell / geo.width())) st.version[cell]++;
+        }
+        st.spare = old != null && old != st.tOld ? old : null; // double buffer
+        st.frame = px;
+    }
+
+    /** Advances a running page transition by the clock. */
+    private void stepTransition(ScreenState st, long now) {
+        if (st.tNew == null) return;
+        double t = (now - st.tStart) / (st.tTicks * 50.0);
+        if (t >= 1 || st.tOld == null) {
+            byte[] fin = st.tNew;
+            st.tNew = null;
+            st.tOld = null;
+            show(st, fin);
+            return;
+        }
+        show(st, composite(st.tOld, st.tNew, geo.pixelWidth(), geo.pixelHeight(), st.tType, ease(t)));
+    }
+
+    private static double ease(double t) {
+        return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+    }
+
+    /** One in-between picture of a transition (t = 0..1). */
+    static byte[] composite(byte[] from, byte[] to, int W, int H, String type, double t) {
+        byte[] out = new byte[W * H];
+        switch (type) {
+            case "slide" -> {
+                // the new page pushes the old one out to the left
+                int shift = (int) Math.round(W * t);
+                for (int y = 0; y < H; y++) {
+                    int row = y * W;
+                    if (W - shift > 0) System.arraycopy(from, row + shift, out, row, W - shift);
+                    if (shift > 0) System.arraycopy(to, row, out, row + W - shift, shift);
+                }
+            }
+            case "down" -> {
+                int rows = (int) Math.round(H * t);
+                System.arraycopy(to, 0, out, 0, rows * W);
+                System.arraycopy(from, rows * W, out, rows * W, (H - rows) * W);
+            }
+            case "split" -> {
+                // opens from the middle outwards
+                int half = (int) Math.round(W / 2.0 * t), mid = W / 2;
+                for (int y = 0; y < H; y++) {
+                    int row = y * W;
+                    System.arraycopy(from, row, out, row, W);
+                    int a = Math.max(0, mid - half), b = Math.min(W, mid + half);
+                    if (b > a) System.arraycopy(to, row + a, out, row + a, b - a);
+                }
+            }
+            default -> {
+                // wipe: the new page is revealed left to right, with a bright edge
+                int cols = (int) Math.round(W * t);
+                byte edge = Palette.of(0xFFFFFF);
+                for (int y = 0; y < H; y++) {
+                    int row = y * W;
+                    if (cols > 0) System.arraycopy(to, row, out, row, cols);
+                    if (W - cols > 0) System.arraycopy(from, row + cols, out, row + cols, W - cols);
+                    if (cols > 0 && cols < W) out[row + cols - 1] = edge;
+                }
+            }
+        }
+        return out;
     }
 
     /** Where an element was last drawn for this player (editor), or null. */
@@ -572,6 +739,11 @@ public final class Screen implements Viewable {
             @Override
             public boolean allowed(String permission) {
                 return p.hasPermission(permission);
+            }
+
+            @Override
+            public ImageStore.Img fontText(String font, int size, String text, int rgb, int shadowRgb) {
+                return m.fonts().render(font, size, text, rgb, shadowRgb);
             }
         };
     }
@@ -668,10 +840,10 @@ public final class Screen implements Viewable {
         synchronized (st) {
             if (now - st.lastTouch < TOUCH_DEBOUNCE_MS) return true;
             st.lastTouch = now;
-            if (st.idle || st.result == null) return true;
-            Page page = set.page(st.page);
+            if (st.idle || st.result == null || st.tNew != null) return true;
+            Page page = st.shown;
             int idx = st.result.elementAt(hit.px(), hit.py());
-            if (page == null || idx < 0 || idx >= page.elements().size() || !(page.name()).equals(pageName(st.builtPage))) return true;
+            if (page == null || idx < 0 || idx >= page.elements().size()) return true;
             el = page.elements().get(idx);
             st.pressed = idx;
             st.pressedUntil = now + PRESS_MS;
@@ -692,12 +864,6 @@ public final class Screen implements Viewable {
         }
         tick(p);
         return true;
-    }
-
-    private static String pageName(String builtKey) {
-        if (builtKey == null) return "";
-        int c = builtKey.indexOf(':');
-        return c < 0 ? builtKey : builtKey.substring(c + 1);
     }
 
     /** Opens a page for one player ("back" = previous page). Player's thread. */
@@ -757,6 +923,7 @@ public final class Screen implements Viewable {
         s.set("view-range", viewRange);
         s.set("touch-range", touchRange);
         s.set("cursor", cursor);
+        s.set("mirror", mirror);
         s.set("icon", icon == null ? null : icon.name());
         s.set("icon-scale", (double) iconScale);
         s.set("icon-spin", iconSpin);
@@ -783,6 +950,7 @@ public final class Screen implements Viewable {
         sc.setViewRange(s.getDouble("view-range", 48));
         sc.setTouchRange(s.getDouble("touch-range", 8));
         sc.cursor = s.getBoolean("cursor", true);
+        sc.mirror = s.getString("mirror", null);
         String ic = s.getString("icon");
         sc.icon = ic == null ? null : Material.matchMaterial(ic);
         sc.iconScale = (float) s.getDouble("icon-scale", 1.2);

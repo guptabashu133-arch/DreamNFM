@@ -46,6 +46,14 @@ public final class ScreenManager implements Listener {
     private final ImageStore images;
     private final Heads heads;
     private final Designs designs;
+    private final Fonts fonts;
+
+    /** Takes over screens for a while: id (changes each time), the page, until when, which screens (null = all). */
+    public record Announcement(String id, Page page, long until, java.util.Set<String> screens) {
+    }
+
+    private volatile Announcement announcement;
+    private volatile Page.Set announcementPages = Page.Set.EMPTY;
     private final Deque<Integer> freeMaps = new ArrayDeque<>();
 
     private record Focus(Screen screen, CancelHandle task) {
@@ -64,6 +72,7 @@ public final class ScreenManager implements Listener {
         this.images = new ImageStore(plugin);
         this.heads = new Heads(plugin);
         this.designs = new Designs(plugin);
+        this.fonts = new Fonts(plugin);
     }
 
     public ImageStore images() {
@@ -149,6 +158,90 @@ public final class ScreenManager implements Listener {
         sessions.remove(e.getPlayer().getUniqueId());
     }
 
+    public Fonts fonts() {
+        return fonts;
+    }
+
+    // ------------------------------------------------------------ announcements
+
+    public Page.Set announcementPages() {
+        return announcementPages;
+    }
+
+    void loadAnnouncements() {
+        File f = new File(plugin.getDataFolder(), "announcements.yml");
+        if (!f.exists() && plugin.getResource("announcements.yml") != null) plugin.saveResource("announcements.yml", false);
+        announcementPages = Page.Set.load(f, plugin.getLogger());
+    }
+
+    /** The announcement this screen shows right now, or null. */
+    Announcement announcementFor(Screen s, long now) {
+        Announcement a = announcement;
+        if (a == null) return null;
+        if (now >= a.until()) {
+            if (announcement == a) {
+                announcement = null;
+                redrawAll();
+            }
+            return null;
+        }
+        return a.screens() == null || a.screens().contains(s.name().toLowerCase(Locale.ROOT)) ? a : null;
+    }
+
+    public Announcement announcement() {
+        Announcement a = announcement;
+        return a != null && System.currentTimeMillis() < a.until() ? a : null;
+    }
+
+    /** Shows a page from announcements.yml. targets = screen names, or null for every screen. */
+    public void announce(Page page, int seconds, java.util.Set<String> targets) {
+        java.util.Set<String> t = targets == null ? null : new java.util.HashSet<>();
+        if (targets != null) for (String n : targets) t.add(n.toLowerCase(Locale.ROOT));
+        announcement = new Announcement(java.util.UUID.randomUUID().toString().substring(0, 8), page,
+                System.currentTimeMillis() + Math.max(1, seconds) * 1000L, t == null ? null : java.util.Set.copyOf(t));
+        redrawAll();
+    }
+
+    /** A quick text announcement: first line big, the rest under it (lines split with |). */
+    public void announceText(String message, int seconds, java.util.Set<String> targets) {
+        announce(textPage(message), seconds, targets);
+    }
+
+    static Page textPage(String message) {
+        String[] lines = message.split("\\|");
+        YamlConfiguration y = new YamlConfiguration();
+        List<Map<String, Object>> els = new ArrayList<>();
+        els.add(new java.util.LinkedHashMap<>(Map.of("type", "rect", "x", "center", "y", "center", "w", "94%", "h", "70%",
+                "color", "#11131A", "border", 2, "border-color", "#FACC15")));
+        Map<String, Object> title = new java.util.LinkedHashMap<>(Map.of("type", "text", "x", "center", "y", lines.length > 1 ? "32%" : "45%",
+                "text", "&l" + lines[0].trim(), "scale", 2, "color", "#FACC15", "shadow-color", "#000000", "max-width", "90%"));
+        els.add(title);
+        if (lines.length > 1) {
+            List<String> rest = new ArrayList<>();
+            for (int i = 1; i < lines.length; i++) rest.add("&f" + lines[i].trim());
+            els.add(new java.util.LinkedHashMap<>(Map.of("type", "lines", "x", "center", "y", "55%", "lines", rest, "max-width", "90%")));
+        }
+        y.set("pages.text.background", "none");
+        y.set("pages.text.sound", "block.note_block.pling");
+        y.set("pages.text.elements", els);
+        return Page.Set.parse(y, java.util.logging.Logger.getAnonymousLogger(), "announcement").page("text");
+    }
+
+    public boolean stopAnnouncement() {
+        boolean was = announcement() != null;
+        announcement = null;
+        redrawAll();
+        return was;
+    }
+
+    // ------------------------------------------------------------ mirrors
+
+    void reloadMirrorsOf(Screen source) {
+        for (Screen s : screens.values()) {
+            if (s != source && source.name().equalsIgnoreCase(s.mirror())) s.reloadPages();
+        }
+    }
+
     public Designs designs() {
         return designs;
     }
@@ -163,6 +256,8 @@ public final class ScreenManager implements Listener {
         images.dir().mkdirs();
         new File(plugin.getDataFolder(), "screens").mkdirs();
         designs.exportBundled();
+        fonts.dir().mkdirs();
+        loadAnnouncements();
         YamlConfiguration y = YamlConfiguration.loadConfiguration(file);
         synchronized (freeMaps) {
             freeMaps.clear();
@@ -185,6 +280,8 @@ public final class ScreenManager implements Listener {
                 }
             }
         }
+        // mirrors can only find their source once every screen is loaded
+        for (Screen sc : screens.values()) if (sc.mirror() != null) sc.reloadPages();
         long every = Math.max(5, plugin.getConfig().getLong("screens.graph-interval-seconds", 30)) * 20L;
         sampler = plugin.scheduler().runGlobalRepeating(this::sample, 20L, every);
     }
@@ -335,6 +432,8 @@ public final class ScreenManager implements Listener {
 
     public void reloadAll() {
         images.clear();
+        fonts.clear();
+        loadAnnouncements();
         for (Screen s : screens.values()) s.reloadPages();
     }
 

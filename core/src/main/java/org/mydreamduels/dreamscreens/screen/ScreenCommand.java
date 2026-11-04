@@ -20,7 +20,8 @@ import java.util.Locale;
 /** /screen - map touchscreens. Pages live in plugins/DreamScreens/screens/<name>.yml. */
 public final class ScreenCommand extends Cmd {
 
-    private static final List<String> SUBS = List.of("create", "delete", "list", "info", "tp", "reload", "page", "images", "set", "icon", "design", "designs", "respawn");
+    private static final List<String> SUBS = List.of("create", "delete", "list", "info", "tp", "reload", "page", "images", "set", "icon", "design", "designs", "respawn",
+            "announce", "mirror", "fonts");
 
     public ScreenCommand(DreamScreens plugin) {
         super(plugin, "dreamscreens.screen");
@@ -139,6 +140,8 @@ public final class ScreenCommand extends Cmd {
             case "design", "template" -> {
                 need(a, 3, "/screen design <screen> <design>   (/screen designs = list)");
                 Screen sc = screen(a[1]);
+                if (sc.mirror() != null)
+                    throw new Fail("&f" + sc.name() + "&c shows &f" + sc.mirror() + "&c's pages - put the design on &f" + sc.mirror() + "&c, or &f/screen mirror " + sc.name() + " off&c first.");
                 if (plugin.screens().designs().file(a[2]) == null)
                     throw new Fail("No design '" + a[2] + "'. Designs: " + String.join(", ", plugin.screens().designs().names()));
                 try {
@@ -153,6 +156,31 @@ public final class ScreenCommand extends Cmd {
                 Text.send(s, names.isEmpty() ? "No designs in plugins/DreamScreens/designs" : "&fDesigns (" + names.size() + "): &7" + String.join("&8, &7", names));
                 Text.raw(s, "&7 Use: &f/screen design <screen> <design> &7or &f/screen create <name> <w> <h> <design>");
             }
+            case "announce", "announcement" -> announce(s, a);
+            case "mirror", "link" -> {
+                need(a, 3, "/screen mirror <screen> <source-screen|off>   (shows the source's pages, edited together)");
+                Screen sc = screen(a[1]);
+                if (a[2].equalsIgnoreCase("off")) {
+                    sc.setMirror(null);
+                    plugin.screens().save();
+                    Text.ok(s, "&f" + sc.name() + "&7 shows its own pages again.");
+                    return;
+                }
+                Screen src = screen(a[2]);
+                if (src == sc) throw new Fail("A screen can't mirror itself.");
+                if (src.mirror() != null) throw new Fail("&f" + src.name() + "&c mirrors &f" + src.mirror() + "&c itself - mirror that one instead.");
+                for (Screen other : plugin.screens().all())
+                    if (sc.name().equalsIgnoreCase(other.mirror())) throw new Fail("&f" + other.name() + "&c mirrors this screen - turn that off first.");
+                sc.setMirror(src.name());
+                plugin.screens().save();
+                Text.ok(s, "&f" + sc.name() + "&7 now shows &f" + src.name() + "&7's pages. Editing either changes both. "
+                        + "&8Same page on both at the same time: &f/se sync on");
+            }
+            case "fonts" -> {
+                List<String> files = plugin.screens().fonts().files();
+                Text.send(s, files.isEmpty() ? "No fonts. Put .ttf files in &fplugins/DreamScreens/fonts &7then use &f/se set font <file>"
+                        : "&fFonts (" + files.size() + "): &7" + String.join("&8, &7", files));
+            }
             case "respawn" -> {
                 need(a, 2, "/screen respawn <name>");
                 screen(a[1]).respawnFrames();
@@ -160,6 +188,37 @@ public final class ScreenCommand extends Cmd {
             }
             default -> help(s);
         }
+    }
+
+    private void announce(CommandSender s, String[] a) {
+        ScreenManager m = plugin.screens();
+        if (a.length < 2) {
+            Text.send(s, "&fAnnouncements: &7" + String.join("&8, &7", m.announcementPages().names()));
+            Text.raw(s, "&7 /screen announce <name> [seconds] [screen ...] &8| &ftext <seconds> <Title|line|line> &8| &fstop");
+            Text.raw(s, "&7 Pages live in &fplugins/DreamScreens/announcements.yml");
+            return;
+        }
+        if (a[1].equalsIgnoreCase("stop")) {
+            Text.ok(s, m.stopAnnouncement() ? "Announcement stopped." : "Nothing was being announced.");
+            return;
+        }
+        if (a[1].equalsIgnoreCase("text")) {
+            need(a, 4, "/screen announce text <seconds> <Title|second line|third line>");
+            int sec = integer(a[2], "Seconds");
+            m.announceText(join(a, 3), sec, null);
+            Text.ok(s, "Showing your text on every screen for &f" + sec + "s");
+            return;
+        }
+        Page page = m.announcementPages().page(a[1]);
+        if (page == null) throw new Fail("No announcement '" + a[1] + "'. Have: " + String.join(", ", m.announcementPages().names()));
+        int sec = a.length > 2 ? integer(a[2], "Seconds") : 15;
+        java.util.Set<String> targets = null;
+        if (a.length > 3) {
+            targets = new java.util.HashSet<>();
+            for (int i = 3; i < a.length; i++) targets.add(screen(a[i]).name());
+        }
+        m.announce(page, sec, targets);
+        Text.ok(s, "Announcing &f" + page.name() + "&7 on " + (targets == null ? "every screen" : String.join(", ", targets)) + " for &f" + sec + "s");
     }
 
     private void create(CommandSender s, String[] a) {
@@ -225,6 +284,7 @@ public final class ScreenCommand extends Cmd {
         Text.raw(s, "&f delete &8| &flist &8| &finfo &8| &ftp &8| &freload [name] &8| &fimages &8| &frespawn <name>");
         Text.raw(s, "&f page <screen> <page|back|home> [player] &8| &fset <name> viewrange|touchrange|cursor <value>");
         Text.raw(s, "&f icon <name> <item|off> [scale] [spin] &8- &7spinning item above the screen");
+        Text.raw(s, "&f announce <name|text|stop> ... &8- &7take over screens for a few seconds &8| &fmirror <screen> <source|off> &8| &ffonts");
         Text.raw(s, "&7Pages: &fplugins/DreamScreens/screens/<name>.yml &7Images: &fplugins/DreamScreens/images/");
     }
 
@@ -236,11 +296,24 @@ public final class ScreenCommand extends Cmd {
             return out;
         }
         String sub = a[0].toLowerCase(Locale.ROOT);
-        if (a.length == 2) return sub.equals("create") || sub.equals("list") || sub.equals("images") || sub.equals("designs") ? List.of() : plugin.screens().names();
+        if (a.length == 2 && sub.equals("announce")) {
+            List<String> out = new ArrayList<>(plugin.screens().announcementPages().names());
+            out.add("text");
+            out.add("stop");
+            return out;
+        }
+        if (a.length == 3 && sub.equals("announce")) return List.of("10", "15", "30", "60");
+        if (a.length >= 4 && sub.equals("announce") && !a[1].equalsIgnoreCase("text")) return plugin.screens().names();
+        if (a.length == 2) return sub.equals("create") || sub.equals("list") || sub.equals("images") || sub.equals("designs") || sub.equals("fonts") ? List.of() : plugin.screens().names();
         if (a.length == 3) {
             if (sub.equals("create")) return List.of("1", "2", "3", "4", "5");
             if (sub.equals("set")) return List.of("viewrange", "touchrange", "cursor");
             if (sub.equals("design") || sub.equals("template")) return plugin.screens().designs().names();
+            if (sub.equals("mirror")) {
+                List<String> out = new ArrayList<>(plugin.screens().names());
+                out.add("off");
+                return out;
+            }
             if (sub.equals("icon")) {
                 List<String> out = new ArrayList<>(List.of("off", "red_bed", "compass", "diamond_sword", "ender_pearl", "nether_star"));
                 for (org.bukkit.Material m : org.bukkit.Material.values()) if (m.isItem() && !m.isLegacy() && out.size() < 300) out.add(m.name().toLowerCase(Locale.ROOT));

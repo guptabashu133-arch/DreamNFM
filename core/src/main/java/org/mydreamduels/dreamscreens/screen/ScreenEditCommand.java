@@ -28,10 +28,11 @@ public final class ScreenEditCommand extends Cmd {
     static final List<String> TYPES = List.of("text", "button", "rect", "image", "head", "progress", "graph", "lines");
     static final List<String> KEYS = List.of("x", "y", "w", "h", "size", "text", "lines", "scale", "spacing", "color", "hover-color",
             "text-color", "border", "border-color", "background", "shadow", "shadow-color", "round", "align", "file", "icon", "icon-size",
-            "player", "value", "max", "source", "permission", "cooldown", "max-width");
+            "player", "value", "max", "source", "permission", "cooldown", "max-width", "scroll", "speed", "font", "font-size");
     private static final List<String> SUBS = List.of("select", "list", "info", "add", "remove", "move", "here", "up", "down", "left", "right",
             "size", "grow", "text", "color", "hover", "textcolor", "border", "scale", "align", "shadow", "set", "unset", "action", "copy",
-            "front", "back", "page", "bg", "bgimage", "grid", "undo", "save", "done", "help");
+            "front", "back", "page", "bg", "bgimage", "grid", "undo", "save", "done", "help",
+            "transition", "sync", "sound", "auto", "schedule", "scroll", "font");
 
     public ScreenEditCommand(DreamScreens plugin) {
         super(plugin, "dreamscreens.screen");
@@ -325,6 +326,63 @@ public final class ScreenEditCommand extends Cmd {
                 current(pe, ed).set("background-image", off ? null : a[1]);
                 save(p, ed, pe, off ? "Background image removed." : "Background image &f" + a[1]);
             }
+            case "scroll" -> {
+                need(a, 2, "/se scroll <on|off> [speed]   (text slides sideways inside its width)");
+                boolean on = !a[1].equalsIgnoreCase("off") && !a[1].equalsIgnoreCase("false");
+                Integer speed = a.length > 2 ? intArg(a[2], "Speed") : null;
+                change(p, (el, ed) -> {
+                    if (!PageEditor.typeOf(el).equals("text")) throw new Fail("Only text can scroll.");
+                    el.put("scroll", on);
+                    if (speed != null) el.put("speed", Math.max(1, speed));
+                    if (on && !el.containsKey("w")) el.put("w", 160);
+                    el.remove("align");
+                }, on ? "Scrolling" + (speed == null ? "" : " at &f" + speed + " px/s") + " &7(width = &f/se size <w> 10&7)" : "Scrolling off.");
+            }
+            case "font" -> {
+                need(a, 2, "/se font <file.ttf|default> [size]");
+                boolean def = a[1].equalsIgnoreCase("default") || a[1].equalsIgnoreCase("off");
+                if (!def && !screens().fonts().files().contains(a[1]))
+                    throw new Fail("No font '" + a[1] + "' in plugins/DreamScreens/fonts (&f/screen fonts&c).");
+                Integer size = a.length > 2 ? intArg(a[2], "Size") : null;
+                change(p, (el, ed) -> {
+                    if (!PageEditor.typeOf(el).equals("text")) throw new Fail("Custom fonts work on text elements.");
+                    if (def) {
+                        el.remove("font");
+                        el.remove("font-size");
+                    } else {
+                        el.put("font", a[1]);
+                        if (size != null) el.put("font-size", Math.max(6, size));
+                    }
+                }, def ? "Back to the Minecraft font." : "Font &f" + a[1] + (size == null ? "" : " " + size + "px"));
+            }
+            case "transition" -> {
+                need(a, 2, "/se transition <" + String.join("|", Page.Set.TRANSITIONS) + "> [ticks]");
+                String type = a[1].toLowerCase(Locale.ROOT);
+                if (!Page.Set.TRANSITIONS.contains(type)) throw new Fail("Use " + String.join(", ", Page.Set.TRANSITIONS) + ".");
+                EditSession ed = session(p);
+                PageEditor pe = editor(ed);
+                pe.yaml.set("transition", type);
+                if (a.length > 2) pe.yaml.set("transition-ticks", Math.max(2, Math.min(40, intArg(a[2], "Ticks"))));
+                save(p, ed, pe, "Page changes now use &f" + type + (type.equals("none") ? "" : " &8(try it: /se done, then click a button)"));
+            }
+            case "sync" -> {
+                need(a, 2, "/se sync <on|off>   (slideshow by the clock: everyone + linked screens see the same page)");
+                boolean on = a[1].equalsIgnoreCase("on") || a[1].equalsIgnoreCase("true");
+                EditSession ed = session(p);
+                PageEditor pe = editor(ed);
+                pe.yaml.set("sync", on ? true : null);
+                save(p, ed, pe, on ? "Slideshow synced to the clock." : "Each player's slideshow runs on its own again.");
+            }
+            case "sound" -> {
+                need(a, 2, "/se sound <sound|off>   (plays when the page changes; /se page sound for one page)");
+                EditSession ed = session(p);
+                PageEditor pe = editor(ed);
+                boolean off = a[1].equalsIgnoreCase("off") || a[1].equalsIgnoreCase("none");
+                pe.yaml.set("switch-sound", off ? null : a[1].toLowerCase(Locale.ROOT));
+                save(p, ed, pe, off ? "No page-change sound." : "Page-change sound &f" + a[1]);
+            }
+            case "auto" -> auto(p, a);
+            case "schedule" -> schedule(p, a);
             case "grid" -> {
                 EditSession ed = session(p);
                 ed.grid = !ed.grid;
@@ -557,6 +615,95 @@ public final class ScreenEditCommand extends Cmd {
         }
     }
 
+    private List<Map<String, Object>> rules(PageEditor pe, String key) {
+        List<Map<String, Object>> out = new ArrayList<>();
+        for (Map<?, ?> m : pe.yaml.getMapList(key)) {
+            Map<String, Object> c = new LinkedHashMap<>();
+            for (Map.Entry<?, ?> e : m.entrySet()) c.put(String.valueOf(e.getKey()), e.getValue());
+            out.add(c);
+        }
+        return out;
+    }
+
+    private void auto(Player p, String[] a) {
+        need(a, 2, "/se auto <add|list|remove|clear>");
+        EditSession ed = session(p);
+        PageEditor pe = editor(ed);
+        List<Map<String, Object>> rules = rules(pe, "auto-pages");
+        switch (a[1].toLowerCase(Locale.ROOT)) {
+            case "list" -> {
+                if (rules.isEmpty()) Text.send(p, "No auto pages. &f/se auto add live %koth_is_running% == true");
+                for (int i = 0; i < rules.size(); i++)
+                    Text.raw(p, "&8 " + (i + 1) + ". &7show &f" + rules.get(i).get("page") + " &7when &f" + rules.get(i).get("when"));
+                Text.raw(p, "&8 First rule that holds wins. Checked every second; announcements still come first.");
+            }
+            case "add" -> {
+                need(a, 4, "/se auto add <page> <condition>   e.g. live %koth_is_running% == true   or   soon {countdown:2026-12-31 20:00} == LIVE");
+                String key = pe.pageKey(a[2]);
+                if (key == null) throw new Fail("No page '" + a[2] + "'.");
+                String when = join(a, 3);
+                rules.add(new LinkedHashMap<>(Map.of("page", key, "when", when)));
+                pe.yaml.set("auto-pages", rules);
+                save(p, ed, pe, "Shows &f" + key + "&7 while &f" + when);
+            }
+            case "remove" -> {
+                need(a, 3, "/se auto remove <number>");
+                int n = intArg(a[2], "Number");
+                if (n < 1 || n > rules.size()) throw new Fail("Pick 1-" + rules.size() + " (&f/se auto list&c).");
+                rules.remove(n - 1);
+                pe.yaml.set("auto-pages", rules.isEmpty() ? null : rules);
+                save(p, ed, pe, "Auto page removed.");
+            }
+            case "clear" -> {
+                pe.yaml.set("auto-pages", null);
+                save(p, ed, pe, "All auto pages removed.");
+            }
+            default -> throw new Fail("Use add, list, remove or clear.");
+        }
+    }
+
+    private void schedule(Player p, String[] a) {
+        need(a, 2, "/se schedule <add|list|remove|clear>");
+        EditSession ed = session(p);
+        PageEditor pe = editor(ed);
+        List<Map<String, Object>> rules = rules(pe, "schedule");
+        switch (a[1].toLowerCase(Locale.ROOT)) {
+            case "list" -> {
+                if (rules.isEmpty()) Text.send(p, "Nothing scheduled. &f/se schedule add night 22:00 06:00");
+                for (int i = 0; i < rules.size(); i++)
+                    Text.raw(p, "&8 " + (i + 1) + ". &f" + rules.get(i).get("page") + " &7from &f" + rules.get(i).get("from") + " &7to &f" + rules.get(i).get("to"));
+                Text.raw(p, "&8 Server time now: &7" + java.time.LocalTime.now().withNano(0).withSecond(0));
+            }
+            case "add" -> {
+                need(a, 5, "/se schedule add <page> <from HH:mm> <to HH:mm>   e.g. night 22:00 06:00");
+                String key = pe.pageKey(a[2]);
+                if (key == null) throw new Fail("No page '" + a[2] + "'.");
+                try {
+                    Page.Set.time(a[3]);
+                    Page.Set.time(a[4]);
+                } catch (RuntimeException e) {
+                    throw new Fail("Times look like 08:00 or 22:30.");
+                }
+                rules.add(new LinkedHashMap<>(Map.of("page", key, "from", a[3], "to", a[4])));
+                pe.yaml.set("schedule", rules);
+                save(p, ed, pe, "&f" + key + "&7 shows from &f" + a[3] + "&7 to &f" + a[4] + " &8(server time)");
+            }
+            case "remove" -> {
+                need(a, 3, "/se schedule remove <number>");
+                int n = intArg(a[2], "Number");
+                if (n < 1 || n > rules.size()) throw new Fail("Pick 1-" + rules.size() + " (&f/se schedule list&c).");
+                rules.remove(n - 1);
+                pe.yaml.set("schedule", rules.isEmpty() ? null : rules);
+                save(p, ed, pe, "Schedule entry removed.");
+            }
+            case "clear" -> {
+                pe.yaml.set("schedule", null);
+                save(p, ed, pe, "Schedule cleared.");
+            }
+            default -> throw new Fail("Use add, list, remove or clear.");
+        }
+    }
+
     private void page(Player p, String[] a) {
         EditSession ed = session(p);
         PageEditor pe = editor(ed);
@@ -653,6 +800,12 @@ public final class ScreenEditCommand extends Cmd {
                 cur.set("seconds", sec);
                 save(p, ed, pe, "&f" + ed.page + "&7 moves on to &f" + key + "&7 after &f" + sec + "s &8(not while you edit)");
             }
+            case "sound" -> {
+                need(a, 3, "/se page sound <sound|off>   (plays when this page opens)");
+                boolean off = a[2].equalsIgnoreCase("off") || a[2].equalsIgnoreCase("none");
+                current(pe, ed).set("sound", off ? null : a[2].toLowerCase(Locale.ROOT));
+                save(p, ed, pe, off ? "No sound for &f" + ed.page : "&f" + ed.page + "&7 plays &f" + a[2] + "&7 when it opens.");
+            }
             case "refresh" -> {
                 need(a, 3, "/se page refresh <ticks>   (20 = every second, 0 = only when needed)");
                 int t = Math.max(0, intArg(a[2], "Ticks"));
@@ -687,6 +840,8 @@ public final class ScreenEditCommand extends Cmd {
         Text.raw(s, "&f text <text> &8| &fcolor <c> &8| &fhover <c> &8| &ftextcolor <c> &8| &fborder <px> [c] &8| &fscale <n> &8| &falign &8| &fshadow");
         Text.raw(s, "&f action add|remove|clear|list &8| &fcopy &8| &ffront &8| &fback &8| &fremove &8| &fset/unset <property>");
         Text.raw(s, "&f page [name|add|remove|rename|start|next|refresh] &8| &fbg <colour|none> &8| &fbgimage <file|off>");
+        Text.raw(s, "&f scroll <on|off> [speed] &8| &ffont <file.ttf> [size] &8| &ftransition <wipe|slide|down|split|none> &8| &fsync on|off");
+        Text.raw(s, "&f sound <sound|off> &8| &fpage sound <sound> &8| &fauto add <page> <condition> &8| &fschedule add <page> <from> <to>");
         Text.raw(s, "&f grid &8| &fundo &8| &fsave <design> &7- colours: #FF5555 or black, white, red, gold, aqua, purple...");
     }
 
@@ -710,6 +865,15 @@ public final class ScreenEditCommand extends Cmd {
                 case "align" -> List.of("left", "center", "right");
                 case "shadow" -> List.of("on", "off", "black");
                 case "set", "unset" -> KEYS;
+                case "transition" -> Page.Set.TRANSITIONS;
+                case "sync", "scroll" -> List.of("on", "off");
+                case "sound" -> List.of("off", "ui.button.click", "block.note_block.pling", "entity.experience_orb.pickup", "item.book.page_turn");
+                case "auto", "schedule" -> List.of("add", "list", "remove", "clear");
+                case "font" -> {
+                    List<String> out = new ArrayList<>(screens().fonts().files());
+                    out.add("default");
+                    yield out;
+                }
                 case "action" -> List.of("add", "remove", "clear", "list");
                 case "bgimage", "image" -> {
                     List<String> out = new ArrayList<>(screens().images().files());
@@ -717,7 +881,7 @@ public final class ScreenEditCommand extends Cmd {
                     yield out;
                 }
                 case "page" -> {
-                    List<String> out = new ArrayList<>(List.of("add", "remove", "rename", "start", "next", "refresh", "open"));
+                    List<String> out = new ArrayList<>(List.of("add", "remove", "rename", "start", "next", "refresh", "open", "sound"));
                     if (ed != null) out.addAll(ed.screen.pages().names());
                     yield out;
                 }
@@ -735,6 +899,8 @@ public final class ScreenEditCommand extends Cmd {
             if (sub.equals("action") && a[1].equalsIgnoreCase("add")) return Action.EXAMPLES;
             if (sub.equals("add") && a[1].equalsIgnoreCase("image")) return screens().images().files();
             if (sub.equals("add") && a[1].equalsIgnoreCase("graph")) return List.of("online", "tps", "mspt");
+            if ((sub.equals("auto") || sub.equals("schedule")) && a[1].equalsIgnoreCase("add") && ed != null) return ed.screen.pages().names();
+            if (sub.equals("transition")) return List.of("6", "8", "12");
             if (sub.equals("page") && ed != null && List.of("remove", "rename", "start", "next", "open").contains(a[1].toLowerCase(Locale.ROOT))) {
                 List<String> out = new ArrayList<>(ed.screen.pages().names());
                 if (a[1].equalsIgnoreCase("next")) out.add("off");
